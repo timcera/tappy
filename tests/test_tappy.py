@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+from __future__ import print_function
+
 import sys
 import unittest
 import glob
@@ -25,11 +27,11 @@ class TappyTest(unittest.TestCase):
         self.con_output1 = subprocess.Popen([
                 os.path.join(os.path.pardir,os.path.pardir,'tappy.py'),
                 'analysis',
-                os.path.join(os.path.pardir,os.path.pardir,'example','mayport_florida_8720220_data.txt'), 
-                os.path.join(os.path.pardir,os.path.pardir,'example','mayport_florida_8720220_data_def.txt'), 
+                os.path.join(os.path.pardir,os.path.pardir,'example','mayport_florida_8720220_data.txt'),
+                os.path.join(os.path.pardir,os.path.pardir,'example','mayport_florida_8720220_data_def.txt'),
         #        '--zero_ts="transform"',
-                '--outputts=True', 
-                '--outputxml="testout.xml"', 
+                '--outputts=True',
+                '--outputxml="testout.xml"',
         #        '--filter="transform"',
                 '--include_inferred=False'
                 ],
@@ -43,26 +45,26 @@ class TappyTest(unittest.TestCase):
             d = difflib.Differ()
             result = list(d.compare(alines, blines))
             result = [i for i in result if i[0] in ['+', '-', '?']]
-            print ''.join(result),
+            print(''.join(result),)
             self.assertEqual(result, [])
 
     def test_closure(self):
         self.con_output2 = subprocess.call([
                 os.path.join(os.path.pardir,os.path.pardir,'tappy.py'),
                 'prediction',
-                'testout.xml', 
-                '2000-01-01T00:00:00', 
-                '2000-02-01T00:00:00', 
-                '60', 
+                'testout.xml',
+                '2000-01-01T00:00:00',
+                '2000-02-01T00:00:00',
+                '60',
                 '--fname="predict.out"'
                 ])
         self.con_output3 = subprocess.Popen([
                 os.path.join(os.path.pardir,os.path.pardir,'tappy.py'),
                 'analysis',
-                'predict.out', 
-                os.path.join(os.path.pardir,'predict_def.out'), 
+                'predict.out',
+                os.path.join(os.path.pardir,'predict_def.out'),
         #        '--zero_ts="transform"',
-                '--outputxml="testoutclosure.xml"', 
+                '--outputxml="testoutclosure.xml"',
         #        '--filter="transform"',
                 '--include_inferred=False'
                 ],
@@ -73,7 +75,7 @@ class TappyTest(unittest.TestCase):
         d = difflib.Differ()
         result = list(d.compare(alines, blines))
         result = [i for i in result if i[0] in ['+', '-', '?']]
-        print ''.join(result),
+        print(''.join(result),)
         self.assertEqual(result, [])
 
 

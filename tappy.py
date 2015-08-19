@@ -46,15 +46,15 @@ import os.path
 import numpy as np
 from scipy.optimize import leastsq
 import datetime
+import operator
 
-
-import tappy_lib
-import sparser
-import astronomia.calendar as cal
-import astronomia.util as uti
-import pad.pad as pad
+import six
+from numpy import pad
 import baker
-from parameter_database import _master_speed_dict, letter_to_factor_map
+
+import astronomia.calendar as cal
+from tappy_lib.parameter_database import _master_speed_dict, letter_to_factor_map
+from tappy_lib import sparser
 
 #===globals======================
 modname = "tappy"
@@ -81,10 +81,10 @@ def debug(ftn, txt):
 
 def fatal(ftn, txt):
     msg = "%s.%s:FATAL:%s\n" % (modname, ftn, txt)
-    raise SystemExit, msg
+    raise SystemExit(msg)
 
 def usage():
-    print __doc__
+    print(__doc__)
 
 
 def interpolate(data, start, stop, iavg):
@@ -164,6 +164,8 @@ class Util():
         self.phase = phase
 
     def sum_signals(self, skey_list, hours, speed_dict, amp = None, phase = None):
+        fpss = open('/tmp/ss.log', 'w')
+        fpss.write('{0}'.format(hours.shape))
         total = np.zeros(len(hours), dtype='f')
         if isinstance(hours[0], datetime.datetime):
             hours = self.dates2jd(hours)
@@ -178,7 +180,10 @@ class Util():
             else:
                 p = (phase - np.average(phase)) + self.phase[i]
             component = R*speed_dict[i]['FF']*np.cos(speed_dict[i]['speed']*hours - (p - speed_dict[i]['VAU'])*deg2rad)
+            fpss.write('{0}'.format(speed_dict[i]['FF'].shape))
+            fpss.write('{0}'.format(component.shape))
             total = total + component
+            fpss.write('{0}'.format(total.shape))
         return total
 
     def dates2jd(self, dates):
@@ -189,13 +194,18 @@ class Util():
 
         if isinstance(dates[0], datetime.datetime):
             jd = [cal.cal_to_jd(i.year, i.month, i.day) +
-                  uti.hms_to_fday(i.hour, i.minute, i.second) for i in dates]
-            jd = np.array(jd)
+                  cal.hms_to_fday(i.hour, i.minute, i.second) for i in dates]
+            jd = np.array(jd).flatten()
         else:
             jd = dates
         return jd
 
     def write_file(self, x, y, fname='-'):
+        fp = open('/tmp/tap.log', 'w')
+        fp.write('{0}'.format(x))
+        fp.write('{0}'.format(y))
+        fp.write('{0}'.format(y.shape))
+        fp.write(fname)
         if isinstance(y, dict):
             for key in y.keys():
                 nfname = "%s_%s.dat" % (os.path.splitext(fname)[-2], key)
@@ -203,7 +213,7 @@ class Util():
         else:
             if fname == '-':
                 for d, v in zip(x, y):
-                    print "%s %f" % (d.isoformat(), v)
+                    print("%s %f" % (d.isoformat(), v))
             else:
                 fpo = open(fname, "w")
                 for d, v in zip(x, y):
@@ -217,10 +227,10 @@ class Util():
         in the dates vector.
         """
 
-        import astronomia.elp2000 as elp
-        import astronomia.sun as sun
+        from astronomia import lunar as elp
+        from astronomia import sun
 
-        lunar_eph = elp.ELP2000()
+        lunar_eph = elp.Lunar()
         solar_eph = sun.Sun()
 
         jd = self.dates2jd(dates)
@@ -250,7 +260,8 @@ class Util():
         const_2 = np.sin(i)**2 * np.cos(2.0*nu) + 0.0727
         nupp = 0.5*np.arctan2(const_1, const_2) # eq 232
 
-        hour = jd[0] - int(jd[0])
+        #hour = jd[0] - int(jd[0])
+        hour = jd[0] - 2400000.5
 
         kap_p = (p - zeta)  # eq 191
 
@@ -704,7 +715,7 @@ class Util():
         num_hours = (jd[-1] - jd[0]) * 24
         numpoint = len(jd) * 0.5 * rayleigh_comp
         if num_hours < 13:
-            print "Cannot calculate any constituents from this record length"
+            print("Cannot calculate any constituents from this record length")
             sys.exit()
         speed_dict["M2"] = self.tidal_dict["M2"]
         if num_hours >= (24 * rayleigh_comp):
@@ -841,7 +852,7 @@ class Util():
         if num_hours >= 77554 * rayleigh_comp:
             speed_dict["M1"] = self.tidal_dict["M1"]
 
-        key_list = speed_dict.keys()
+        key_list = list(speed_dict.keys())
         key_list.sort()
 
         return (speed_dict, key_list)
@@ -883,7 +894,7 @@ class tappy(Util):
                                          mode='r')
         for line in fp:
             if 'water_level' not in line.parsed_dict.keys():
-                print 'Warning: record %i did not parse according to the supplied definition file' % line.line_number
+                print('Warning: record %i did not parse according to the supplied definition file' % line.line_number)
                 continue
             if 'datetime' in line.parsed_dict.keys():
                 self.dates.append(line.parsed_dict['datetime'])
@@ -901,12 +912,12 @@ class tappy(Util):
                                                 line.parsed_dict['minute'],
                                                 line.parsed_dict['second']))
             else:
-                print 'Warning: record %i did not parse the date and time according to the supplied definition file' % line.line_number
-                print 'Requires "year", "month", "day", and "hour" ("minute" and "second" are optional and default to zero) OR a Julian date/time'
+                print('Warning: record %i did not parse the date and time according to the supplied definition file' % line.line_number)
+                print('Requires "year", "month", "day", and "hour" ("minute" and "second" are optional and default to zero) OR a Julian date/time')
                 continue
             self.elevation.append(line.parsed_dict['water_level'])
         if len(self.elevation) == 0:
-            print 'No data was found in the input file.'
+            print('No data was found in the input file.')
             sys.exit()
         self.elevation = np.array(self.elevation)
         self.dates = np.array(self.dates)
@@ -918,7 +929,7 @@ class tappy(Util):
         """
 
         if task not in ['fail', 'ignore', 'fill']:
-            print "missing-data must be one of 'fail' (the default), 'ignore', or 'fill'"
+            print("missing-data must be one of 'fail' (the default), 'ignore', or 'fill'")
             sys.exit()
 
         if task == 'ignore':
@@ -928,7 +939,7 @@ class tappy(Util):
 
         if np.any(interval > datetime.timedelta(seconds = 3600)):
             if task == 'fail':
-                print "There is a difference of greater than one hour between values"
+                print("There is a difference of greater than one hour between values")
                 sys.exit()
 
         if task == 'fill':
@@ -1005,9 +1016,9 @@ class tappy(Util):
         for index, key in enumerate(key_list):
             H[key] = p[index]
             phase[key] = p[index + len(key_list)]
-            #print '---'
-            #print key
-            #print self.speed_dict[key]['FF'][:3]
+            #print('---')
+            #print(key)
+            #print(self.speed_dict[key]['FF'][:3])
         if len(self.speed_dict[key_list[0]]['FF']) == len(t):
             ff = self.tidal_dict
         else:
@@ -1099,8 +1110,8 @@ class tappy(Util):
 
 
         sumterm = np.zeros((len(t)))
-        for i in key_list + self.inferred_key_list:
-            sumterm = sumterm + H[i]*ff[i]['FF']*np.cos(self.tidal_dict[i]['speed']*t - phase[i])
+        for i in list(key_list) + self.inferred_key_list:
+            sumterm = sumterm + H[i]*np.squeeze(ff[i]['FF'])*np.cos(self.tidal_dict[i]['speed']*t - phase[i])
 
         if self.linear_trend:
             self.err = ht - (p[-2]*t + p[-1] + sumterm)
@@ -1116,8 +1127,8 @@ class tappy(Util):
     def constituents(self):
         difference = self.dates[1:] - self.dates[:-1]
         if np.any(difference < datetime.timedelta(seconds = 0)):
-            print "Let's do the time warp again!"
-            print "The date values reverse - they must be constantly increasing."
+            print("Let's do the time warp again!")
+            print("The date values reverse - they must be constantly increasing.")
             sys.exit()
 
         p0 = [1.0]*(len(self.speed_dict)*2 + 2)
@@ -1125,7 +1136,7 @@ class tappy(Util):
         p0[-1] = np.average(self.elevation)
         self.ntimes = (self.jd - self.jd[0]) * 24
 
-        lsfit = leastsq(self.residuals, p0, args=(self.elevation, self.ntimes, self.key_list))
+        lsfit = leastsq(self.residuals, p0, args=(np.array(self.elevation), np.array(self.ntimes), np.array(self.key_list)))
 
         self.r = {}
         self.phase = {}
@@ -1441,7 +1452,7 @@ class tappy(Util):
             return dates_filled[nslice], relevation[nslice]
 
         if nstype == 'cd':
-            print "Complex demodulation filter doesn't work right yet - still testing."
+            print("Complex demodulation filter doesn't work right yet - still testing.")
 
             (new_dates, new_elev) = self.missing('fill', dates_filled, nelevation)
             kern = np.ones(25) * (1./25.)
@@ -1457,7 +1468,7 @@ class tappy(Util):
                 ns_amplitude[key] = np.absolute(yt)
                 ns_amplitude[key] = yt.real
                 ns_amplitude[key] = np.convolve(ns_amplitude[key], kern, mode='same')
-                print key, np.average(ns_amplitude[key])
+                print(key, np.average(ns_amplitude[key]))
                 ns_amplitude[key] = np.convolve(ns_amplitude[key],
                                                kern,
                                                mode = 1)
@@ -1474,13 +1485,9 @@ class tappy(Util):
             return dates_filled[nslice], relevation[nslice]
 
 
-    def sortbyvalue(self, dict):
+    def sortbyvalue(self, mydict):
         """ Return a list of (key, value) pairs, sorted by value. """
-        _swap2 = lambda (x, y): (y, x)
-        mdict = map(_swap2, dict.items())
-        mdict.sort()
-        mdict = map(_swap2, mdict)
-        return mdict
+        return sorted(six.iteritems(mydict), key=operator.itemgetter(1))
 
 
     def print_con(self):
@@ -1488,30 +1495,30 @@ class tappy(Util):
         for k in self.key_list:
             ndict[k] = self.speed_dict[k]['speed']
 
-        print "\n#%12s %12s %12s %12s" % ("NAME", "SPEED", "H", "PHASE")
-        print   "#%12s %12s %12s %12s" % ("====", "=====", "=", "=====")
+        print("\n#%12s %12s %12s %12s" % ("NAME", "SPEED", "H", "PHASE"))
+        print(  "#%12s %12s %12s %12s" % ("====", "=====", "=", "====="))
         klist = [i[0] for i in self.sortbyvalue(ndict)]
         for i in klist:
-            print " %12s %12.8f %12.4f %12.4f" % (i,
+            print(" %12s %12.8f %12.4f %12.4f" % (i,
                                                 self.speed_dict[i]['speed']*rad2deg,
                                                 self.r[i],
-                                                self.phase[i])
-        print "\n# INFERRED CONSTITUENTS"
+                                                self.phase[i]))
+        print("\n# INFERRED CONSTITUENTS")
         ndict = {}
         for k in self.inferred_key_list:
             ndict[k] = self.tidal_dict[k]['speed']
-        print "#%12s %12s %12s %12s" % ("NAME", "SPEED", "H", "PHASE")
-        print "#%12s %12s %12s %12s" % ("====", "=====", "=", "=====")
+        print("#%12s %12s %12s %12s" % ("NAME", "SPEED", "H", "PHASE"))
+        print("#%12s %12s %12s %12s" % ("====", "=====", "=", "====="))
         klist = [i[0] for i in self.sortbyvalue(ndict)]
         for i in klist:
-            print " %12s %12.8f %12.4f %12.4f" % (i,
+            print(" %12s %12.8f %12.4f %12.4f" % (i,
                                                 self.tidal_dict[i]['speed']*rad2deg,
                                                 self.inferred_r[i],
-                                                self.inferred_phase[i])
+                                                self.inferred_phase[i]))
 
-        print "\n# AVERAGE (Z0) = ", self.fitted_average
+        print("\n# AVERAGE (Z0) = ", self.fitted_average)
         if self.linear_trend:
-            print "# SLOPE OF REMOVED LINEAR TREND = ", self.slope
+            print("# SLOPE OF REMOVED LINEAR TREND = ", self.slope)
 
 
     def print_ephemeris_table(self):
@@ -1558,24 +1565,24 @@ class tappy(Util):
             (zeta, nu, nup, nupp, kap_p, ii, R, Q, T, self.jd, s, h, Nv, p, p1) = package
             Ra = 1.0/np.sqrt(1.0 - 12.0*(np.tan(0.5*ii))**2 * np.cos(2.0*kap_p) +
                     36.0*(np.tan(0.5*ii))**4) # eq 215, schureman
-            print dates[0].isoformat(),
-            print ' h = ', h*rad2deg, h_schureman[d], h*rad2deg - h_schureman[d]
-            print ' p1 = ', p1[0]*rad2deg, p1_schureman[d], p1[0]*rad2deg - p1_schureman[d]
-            print ' s = ', s*rad2deg, s_schureman[d], s*rad2deg - s_schureman[d]
-            print ' p = ', p*rad2deg, p_schureman[d], p*rad2deg - p_schureman[d]
-            print ' Nv = ', Nv[0]*rad2deg, N_schureman[d], Nv[0]*rad2deg - N_schureman[d]
-            print " zeta = ", zeta*rad2deg
-            print " nu = ", nu*rad2deg
-            print " nup = ", nup*rad2deg
-            print " nupp = ", nupp*rad2deg
-            print " kap_p = ", kap_p*rad2deg
-            print " ii = ", ii*rad2deg
-            print " R = ", R*rad2deg
-            print " Ra = ", Ra*rad2deg
-            print " log(Ra) = ", np.log10(Ra)
-            print " Q = ", Q*rad2deg
-            print " log(Q) = ", np.log(Q)
-            print " T = ", T*rad2deg
+            print(dates[0].isoformat(),)
+            print(' h = ', h*rad2deg, h_schureman[d], h*rad2deg - h_schureman[d])
+            print(' p1 = ', p1[0]*rad2deg, p1_schureman[d], p1[0]*rad2deg - p1_schureman[d])
+            print(' s = ', s*rad2deg, s_schureman[d], s*rad2deg - s_schureman[d])
+            print(' p = ', p*rad2deg, p_schureman[d], p*rad2deg - p_schureman[d])
+            print(' Nv = ', Nv[0]*rad2deg, N_schureman[d], Nv[0]*rad2deg - N_schureman[d])
+            print(" zeta = ", zeta*rad2deg)
+            print(" nu = ", nu*rad2deg)
+            print(" nup = ", nup*rad2deg)
+            print(" nupp = ", nupp*rad2deg)
+            print(" kap_p = ", kap_p*rad2deg)
+            print(" ii = ", ii*rad2deg)
+            print(" R = ", R*rad2deg)
+            print(" Ra = ", Ra*rad2deg)
+            print(" log(Ra) = ", np.log10(Ra))
+            print(" Q = ", Q*rad2deg)
+            print(" log(Q) = ", np.log(Q))
+            print(" T = ", T*rad2deg)
 
         t = tappy(
             def_filename=None,
@@ -1603,9 +1610,9 @@ class tappy(Util):
         (speed_dict, key_list) = t.which_constituents(len(t.dates), package)
         for k in ['J1', 'K1', 'K2', 'L2', 'M1', 'M2', 'M3', 'M6', 'M8', 'O1', 'OO1', 'MO3', 'MO3', 'Mf', 'Mm']:
             for i in [1900, 1930]:
-                print i, k, speed_dict[k]['FF'][i-1900]
+                print(i, k, speed_dict[k]['FF'][i-1900])
                 if k == 'M2':
-                    print 'M2>>', -2.14*np.sin(Nv[0]*deg2rad)*rad2deg, speed_dict[k]['VAU']
+                    print('M2>>', -2.14*np.sin(Nv[0]*deg2rad)*rad2deg, speed_dict[k]['VAU'])
         self.print_v_u_table()
 
 
@@ -1637,7 +1644,7 @@ class tappy(Util):
 
         key_list.sort()
         for key in key_list:
-            print key, speed_dict[key]['VAU']
+            print(key, speed_dict[key]['VAU'])
 
 
     def print_node_factor_table(self):
@@ -1711,7 +1718,10 @@ def prediction(
         skey_list.remove('Z0')
     except ValueError:
         pass
-    prediction = prediction + u.sum_signals(skey_list, u.dates, u.tidal_dict)
+
+    calcdates = np.array(range(len(u.dates)),
+            dtype=np.float64)*float(interval)/60.0
+    prediction = prediction + u.sum_signals(skey_list, calcdates, u.tidal_dict)
 
     u.write_file(u.dates, prediction, fname=fname)
 
@@ -1743,37 +1753,64 @@ def analysis(
         xmltimezone='0000',
         xmlcomments='No comment',
         xmlunits='m',
-        xmldecimalplaces=None,
+        xmldecimalplaces='full',
         ):
     '''Traditional analysis with separately calculated nodal factors.
         Constituent amplitude units are the same as the input heights.
         Constituent phases are based in the same time zone as the dates.
 
        :param data_filename: The time-series of elevations to be analyzed.
-       :param def_filename: Containes the definition string to parse the input data.
-       :param config: Read command line options from config file, override config file entries on the command line.
+       :param def_filename: Containes the definition string to parse the input
+           data.
+       :param config: Read command line options from config file, override
+           config file entries on the command line.
        :param quiet: Print nothing to the screen.
        :param debug: Print debug messages.
        :param outputts: Output time series for each constituent.
        :param ephemeris: Print out ephemeris tables.
-       :param rayleigh: The Rayleigh coefficient is used to compare against to determine time series length to differentiate between two frequencies. [default: default]
-       :param missing_data: What should be done if there is missing data.  One of: fail, ignore, or fill. [default: default]
+       :param rayleigh: The Rayleigh coefficient is used to compare against to
+           determine time series length to differentiate between two
+           frequencies.  [default: default]
+       :param missing_data: What should be done if there is missing data.  One
+           of: fail, ignore, or fill. [default: default]
        :param linear_trend: Include a linear trend in the least squares fit.
-       :param remove_extreme: Remove values outside of 2 standard deviations before analysis.
-       :param zero_ts: Zero the input time series before constituent analysis by subtracting filtered data. One of: transform,usgs,doodson,boxcar
-       :param filter:  Filter input data set with tide elimination filters. The -o outputts option is implied. Any mix separated by commas and no spaces: transform,usgs,doodson,boxcar
-       :param pad_filters: Pad input data set with values to return same size after filtering.  Realize edge effects are unavoidable.  One of ["tide", "minimum", "maximum", "mean", "median", "reflect", "wrap"]
-       :param include_inferred: Do not incorporate any inferred constituents into the least squares fit.
-       :param print_vau_table: For debugging - will print a table of V and u values to compare against Schureman.
+       :param remove_extreme: Remove values outside of 2 standard deviations
+           before analysis.
+       :param zero_ts: Zero the input time series before constituent analysis
+           by subtracting filtered data. One of: transform,usgs,doodson,boxcar
+       :param filter:  Filter input data set with tide elimination filters. The
+           -o outputts option is implied. Any mix separated by commas and no
+           spaces: transform,usgs,doodson,boxcar
+       :param pad_filters: Pad input data set with values to return same size
+           after filtering.  Realize edge effects are unavoidable.  One of
+           ["tide", "minimum", "maximum", "mean", "median", "reflect", "wrap"]
+       :param include_inferred: Do not incorporate any inferred constituents
+           into the least squares fit.
+       :param print_vau_table: For debugging - will print a table of V and u
+           values to compare against Schureman.
        :param outputxml: File name to output constituents as IHOTC XML format.
-       :param xmlname: Not used in analysis. Used ONLY to complete the XML file. Name of the station supplying the observations. Defaults to 'A port in a storm'.
-       :param xmlcountry: Not used in analysis. Used ONLY to complete the XML file. Name of the country containing the station. Defaults to 'A man without a country'.
-       :param xmllatitude: Not used in analysis. Used ONLY to complete the XML file. Latitude of the station. Defaults to 0.0.
-       :param xmllongitude: Not used in analysis. Used ONLY to complete the XML file. Longitude of the station. Defaults to 0.0.
-       :param xmltimezone: Not used in analysis. Used ONLY to complete the XML file. Time zone of the station. Defaults to '0000'.
-       :param xmlcomments: Not used in analysis. Used ONLY to complete the XML file. Station comments. Defaults to 'No comment'.
-       :param xmlunits: Not used in analysis. Used ONLY to complete the XML file. Units of the observed water level. Defaults to 'm'.
-       :param xmldecimalplaces: Not used in analysis. Used ONLY to complete the XML file. Format of the observed amplitude and phase. Default depends on length of analysis record.
+       :param xmlname: Not used in analysis. Used ONLY to complete the XML
+           file. Name of the station supplying the observations. Defaults to 'A
+           port in a storm'.
+       :param xmlcountry: Not used in analysis. Used ONLY to complete the XML
+           file. Name of the country containing the station. Defaults to 'A man
+           without a country'.
+       :param xmllatitude: Not used in analysis. Used ONLY to complete the XML
+           file. Latitude of the station. Defaults to 0.0.
+       :param xmllongitude: Not used in analysis. Used ONLY to complete the XML
+           file. Longitude of the station. Defaults to 0.0.
+       :param xmltimezone: Not used in analysis. Used ONLY to complete the XML
+           file. Time zone of the station. Defaults to '0000'.
+       :param xmlcomments: Not used in analysis. Used ONLY to complete the XML
+           file. Station comments. Defaults to 'No comment'.
+       :param xmlunits: Not used in analysis. Used ONLY to complete the XML
+           file. Units of the observed water level. Defaults to 'm'.
+       :param xmldecimalplaces: Not used in analysis. Used ONLY to complete the
+           XML file. Format of the observed amplitude and phase. Default
+           depends on length of analysis record.  'full' is the default and
+           means that full accuracy, 'ihotc' is formatted according to IHOTC
+           standard which severly limits the number of decimal places, and if
+           an integer number lists the number of decimal places.
     '''
 
     if config:
@@ -1825,13 +1862,13 @@ def analysis(
         # FIX - have to run the constituents package here in order to have
         # filters available , and then run AGAIN later on.
         x.constituents()
-        print len(x.dates), len(x.elevation)
+        print(len(x.dates), len(x.elevation))
         x.dates_filled, x.elevation_filled = x.missing('fill', x.dates, x.elevation)
-        print len(x.dates_filled), len(x.elevation_filled)
+        print(len(x.dates_filled), len(x.elevation_filled))
         x.dates, filtered = x.filters(zero_ts,
                                       x.dates_filled,
                                       x.elevation_filled)
-        print len(x.dates), len(filtered)
+        print(len(x.dates), len(filtered))
         x.elevation = x.elevation_filled - filtered
         package = x.astronomic(x.dates)
         (x.zeta, x.nu, x.nup, x.nupp, x.kap_p, x.ii, x.R, x.Q, x.T, x.jd, x.s, x.h, x.N, x.p, x.p1) = package
@@ -1930,16 +1967,19 @@ def analysis(
             ndict[k] = x.tidal_dict[k]['speed']
         klist = [i[0] for i in x.sortbyvalue(ndict)]
 
-        if xmldecimalplaces:
-            ampformatstr = '0:.' + xmldecimalplaces + 'f}'
-            phaformatstr = ampformatstr
-        else:
+        if xmldecimalplaces == 'ihotc':
             ampformatstr = '{0:.3f}'
             phaformatstr = '{0:.1f}'
             daterange = x.dates[-1] - x.dates[0]
             if daterange < datetime.timedelta(days = 90):
                 ampformatstr = '{0:.2f}'
                 phaformatstr = '{0:.0f}'
+        elif xmldecimalplaces == 'full':
+            ampformatstr = '{0}'
+            phaformatstr = ampformatstr
+        else:
+            ampformatstr = '{0:.' + xmldecimalplaces + 'f}'
+            phaformatstr = ampformatstr
 
         for key in klist:
             if key in x.key_list:

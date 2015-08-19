@@ -2,7 +2,7 @@
 
 """
 NAME:
-    filter.py  
+    filter.py
 
 SYNOPSIS:
     filter.py is only an importable library
@@ -58,7 +58,7 @@ def fatal(ftn, txt):
     """If can't continue."""
     msg = "%s.%s:FATAL:%s\n" % (modname, ftn, txt)
     raise SystemExit, msg
- 
+
 def usage():
     """Prints the docstring."""
     print __doc__
@@ -66,7 +66,7 @@ def usage():
 #====================================
 
 def fft_lowpass(nelevation, low_bound, high_bound):
-    """ Performs a low pass filer on the nelevation series.
+    """ Performs a low pass filter on the nelevation series.
     low_bound and high_bound specifes the boundary of the filter.
     """
     import numpy.fft as F
