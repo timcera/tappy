@@ -4,7 +4,7 @@ import string
 import datetime
 import scipy as N
 
-filename = 'mayport_florida_8720220_data.txt'
+filename = "mayport_florida_8720220_data.txt"
 
 fp = open(filename, "r")
 fp.readline()
@@ -21,14 +21,11 @@ for line in fp:
 elevation = N.array(elevation)
 
 fpo = open("mayport_xmgrace.dat", "w")
-for index,d in enumerate(dates):
+for index, d in enumerate(dates):
     fpo.write("%s %f\n" % (d.isoformat(), elevation[index]))
 
-con = N.convolve(elevation, [1./25.]*25, mode=1)
+con = N.convolve(elevation, [1.0 / 25.0] * 25, mode=1)
 
 fpo = open("mayport_xmgrace_data_convolved.dat", "w")
-for index,d in enumerate(dates):
+for index, d in enumerate(dates):
     fpo.write("%s %f\n" % (d.isoformat(), elevation[index] - con[index]))
-
-
-

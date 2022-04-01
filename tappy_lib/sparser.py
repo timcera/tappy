@@ -45,7 +45,7 @@ EXAMPLES:
 #    675 Mass Ave, Cambridge, MA 02139, USA.
 """
 
-#===imports======================
+# ===imports======================
 import sys
 import os
 import getopt
@@ -56,28 +56,29 @@ import datetime
 from pyparsing import *
 
 
-#===globals======================
+# ===globals======================
 modname = "sparser"
 __version__ = "0.3"
 
 
-#--option args--
+# --option args--
 debug_p = 0
-#opt_b=None  #string arg, default is undefined
+# opt_b=None  #string arg, default is undefined
 
 
-#---positional args, default is empty---
+# ---positional args, default is empty---
 pargs = []
 
 
-#---other---
+# ---other---
 
 
-#===utilities====================
+# ===utilities====================
 def msg(txt):
     """Send message to stdout."""
     sys.stdout.write(txt)
     sys.stdout.flush()
+
 
 def debug(ftn, txt):
     """Used for debugging."""
@@ -85,10 +86,12 @@ def debug(ftn, txt):
         sys.stdout.write("%s.%s:%s\n" % (modname, ftn, txt))
         sys.stdout.flush()
 
+
 def fatal(ftn, txt):
     """If can't continue."""
     msg = "%s.%s:FATAL:%s\n" % (modname, ftn, txt)
     raise SystemExit(msg)
+
 
 def usage():
     """Prints the docstring."""
@@ -104,32 +107,42 @@ decimal_sep = "."
 # Extra dictionary
 extra_dict = {}
 
-#====================================
+# ====================================
 class DefinitionFileNotFoundError(Exception):
     def __init__(self, def_filename):
         self.value = def_filename
+
     def __str__(self):
         return repr(self.value)
+
 
 def toInteger(instring, loc, tokenlist):
     """Converts parsed integer string to an integer."""
     return int(tokenlist[0])
 
+
 def toFloat(instring, loc, tokenlist):
     """Converts parsed real string to a real."""
     return float(tokenlist[0])
 
+
 def toString(instring, loc, tokenlist):
     """Returns an integer or real as a string."""
     return tokenlist[0]
+
 
 def toDatetime(instring, loc, tokenlist):
     """Returns a datetime object."""
     global _origin
     global _unit
 
-    exec('rvar = _origin + datetime.timedelta({0}={1})'.format(_unit, float(tokenlist[0])))
+    exec(
+        "rvar = _origin + datetime.timedelta({0}={1})".format(
+            _unit, float(tokenlist[0])
+        )
+    )
     return rvar
+
 
 def isotoDate(instring, loc, tokenlist):
     """Returns a datetime object."""
@@ -137,159 +150,138 @@ def isotoDate(instring, loc, tokenlist):
     rvar = datetime.datetime(*rvar)
     return rvar
 
-def integer(name,
-            minimum=1,
-            maximum=0,
-            exact=0,
-            sign=Optional(oneOf("- +")),
-            parseAct=toInteger):
+
+def integer(
+    name, minimum=1, maximum=0, exact=0, sign=Optional(oneOf("- +")), parseAct=toInteger
+):
     """Appends a skip/integer combination to the parse constructs."""
-    lint = Combine(sign +
-                   Word(nums,
-                        min=minimum,
-                        max=maximum,
-                        exact=exact))
+    lint = Combine(sign + Word(nums, min=minimum, max=maximum, exact=exact))
     grammar.append(SkipTo(lint))
-    grammar.append(lint
-                   .setResultsName(name)
-                   .setParseAction(parseAct))
+    grammar.append(lint.setResultsName(name).setParseAction(parseAct))
 
-def positive_integer(name,
-                     minimum=1,
-                     maximum=0,
-                     exact=0):
+
+def positive_integer(name, minimum=1, maximum=0, exact=0):
     """Will only parse a positive integer."""
-    integer(name,
-            minimum=minimum,
-            maximum=maximum,
-            exact=exact,
-            sign=Optional("+"))
+    integer(name, minimum=minimum, maximum=maximum, exact=exact, sign=Optional("+"))
 
-def negative_integer(name,
-                     minimum=1,
-                     maximum=0,
-                     exact=0):
+
+def negative_integer(name, minimum=1, maximum=0, exact=0):
     """Will only parse a negative integer."""
-    integer(name,
-            minimum=minimum,
-            maximum=maximum,
-            exact=exact,
-            sign="-")
+    integer(name, minimum=minimum, maximum=maximum, exact=exact, sign="-")
 
-def real(name,
-         required_decimal=True,
-         sign=Optional(oneOf("- +")),
-         parseAct=toFloat):
+
+def real(name, required_decimal=True, sign=Optional(oneOf("- +")), parseAct=toFloat):
     """Appends a skip/real pair to the parse constructs."""
     if required_decimal:
-        lword = Combine(sign +
-                    Regex('[0-9]*\.[0-9]*') +
-                    Optional(oneOf("E e D d") + Optional(oneOf("- +")) + Word(nums)))
+        lword = Combine(
+            sign
+            + Regex("[0-9]*\.[0-9]*")
+            + Optional(oneOf("E e D d") + Optional(oneOf("- +")) + Word(nums))
+        )
     else:
-        lword = Combine(sign +
-                    Word(nums + decimal_sep) +
-                    Optional(oneOf("E e D d") + Optional(oneOf("- +")) + Word(nums)))
+        lword = Combine(
+            sign
+            + Word(nums + decimal_sep)
+            + Optional(oneOf("E e D d") + Optional(oneOf("- +")) + Word(nums))
+        )
     grammar.append(SkipTo(lword))
-    grammar.append(lword
-                   .setResultsName(name)
-                   .setParseAction(parseAct))
+    grammar.append(lword.setResultsName(name).setParseAction(parseAct))
 
-def positive_real(name,
-                  minimum=1,
-                  maximum=0,
-                  exact=0):
+
+def positive_real(name, minimum=1, maximum=0, exact=0):
     """Will only parse a positive real."""
-    real(name,
-         minimum=minimum,
-         maximum=maximum,
-         exact=exact,
-         sign=Optional("+"))
+    real(name, minimum=minimum, maximum=maximum, exact=exact, sign=Optional("+"))
 
-def negative_real(name,
-                  minimum=1,
-                  maximum=0,
-                  exact=0):
+
+def negative_real(name, minimum=1, maximum=0, exact=0):
     """Will only parse a negative real."""
-    real(name,
-         minimum=minimum,
-         maximum=maximum,
-         exact=exact,
-         sign="-")
+    real(name, minimum=minimum, maximum=maximum, exact=exact, sign="-")
 
-def real_as_string(name,
-                   minimum=1,
-                   maximum=0,
-                   exact=0,
-                   sign=Optional(oneOf("- +")),
-                   parseAct=toString):
+
+def real_as_string(
+    name, minimum=1, maximum=0, exact=0, sign=Optional(oneOf("- +")), parseAct=toString
+):
     """Parses a real number, but returns it as a string."""
-    real(name,
-         minimum=minimum,
-         maximum=maximum,
-         exact=exact,
-         sign=Optional("- +"),
-         parseAct=parseAct)
+    real(
+        name,
+        minimum=minimum,
+        maximum=maximum,
+        exact=exact,
+        sign=Optional("- +"),
+        parseAct=parseAct,
+    )
 
-def integer_as_string(name,
-                      minimum=1,
-                      maximum=0,
-                      exact=0,
-                      sign=Optional(oneOf("- +")),
-                      parseAct=toString):
+
+def integer_as_string(
+    name, minimum=1, maximum=0, exact=0, sign=Optional(oneOf("- +")), parseAct=toString
+):
     """Parses an integer, but returns it as a string."""
-    integer(name,
-            minimum=minimum,
-            maximum=maximum,
-            exact=exact,
-            sign=Optional("+"),
-            parseAct=parseAct)
+    integer(
+        name,
+        minimum=minimum,
+        maximum=maximum,
+        exact=exact,
+        sign=Optional("+"),
+        parseAct=parseAct,
+    )
 
-def isoformat_as_datetime(name,
-         parseAct=isotoDate):
+
+def isoformat_as_datetime(name, parseAct=isotoDate):
     """Appends a skip/real pair to the parse constructs."""
-    lword = (Word(nums) + '-' +
-             Word(nums) + '-' +
-             Word(nums) + oneOf('T  ') +
-             Word(nums) + ':' +
-             Word(nums) + ':' +
-             Word(nums)
-             )
+    lword = (
+        Word(nums)
+        + "-"
+        + Word(nums)
+        + "-"
+        + Word(nums)
+        + oneOf("T  ")
+        + Word(nums)
+        + ":"
+        + Word(nums)
+        + ":"
+        + Word(nums)
+    )
     grammar.append(SkipTo(lword))
-    grammar.append(lword
-                   .setResultsName(name)
-                   .setParseAction(parseAct))
+    grammar.append(lword.setResultsName(name).setParseAction(parseAct))
 
-def real_as_datetime(name,
-                     sign=Optional(oneOf("- +")),
-                     origin=datetime.datetime(1900,1,1),
-                     unit='days',
-                     parseAct=toDatetime):
+
+def real_as_datetime(
+    name,
+    sign=Optional(oneOf("- +")),
+    origin=datetime.datetime(1900, 1, 1),
+    unit="days",
+    parseAct=toDatetime,
+):
     global _origin
     global _unit
     _origin = origin
     _unit = unit
-    real(name,
-         sign=Optional("- +"),
-         parseAct=toDatetime)
+    real(name, sign=Optional("- +"), parseAct=toDatetime)
 
-def integer_as_datetime(name,
-                      minimum=1,
-                      maximum=0,
-                      exact=0,
-                      sign=Optional(oneOf("- +")),
-                      origin=datetime.datetime(1900,1,1),
-                      unit='days',
-                      parseAct=toDatetime):
+
+def integer_as_datetime(
+    name,
+    minimum=1,
+    maximum=0,
+    exact=0,
+    sign=Optional(oneOf("- +")),
+    origin=datetime.datetime(1900, 1, 1),
+    unit="days",
+    parseAct=toDatetime,
+):
     global _origin
     global _unit
     _origin = origin
     _unit = unit
-    integer(name,
-         minimum=minimum,
-         maximum=maximum,
-         exact=exact,
-         sign=Optional("- +"),
-         parseAct=toDatetime)
+    integer(
+        name,
+        minimum=minimum,
+        maximum=maximum,
+        exact=exact,
+        sign=Optional("- +"),
+        parseAct=toDatetime,
+    )
+
 
 def qstring(name):
     """Parses a quoted (either double or single quotes) string."""
@@ -297,48 +289,51 @@ def qstring(name):
     grammar.append(SkipTo(quoted_string))
     grammar.append(quoted_string.setResultsName(name))
 
+
 def delimited_as_string(name):
     """Parses out any delimited group as a string."""
     wrd = Word(alphanums)
     grammar.append(SkipTo(wrd))
     grammar.append(wrd.setResultsName(name))
 
-def number_as_real(name,
-                    sign=Optional(oneOf("- +")),
-                    parseAct=toFloat):
+
+def number_as_real(name, sign=Optional(oneOf("- +")), parseAct=toFloat):
     """Parses any number as a real."""
-    real(name,
-         required_decimal=False,
-         sign=Optional(oneOf("- +")),
-         parseAct=toFloat)
+    real(name, required_decimal=False, sign=Optional(oneOf("- +")), parseAct=toFloat)
 
-def number_as_integer(name,
-                    minimum=1,
-                    maximum=0,
-                    exact=0,
-                    sign=Optional(oneOf("- +")),
-                    parseAct=toInteger):
+
+def number_as_integer(
+    name, minimum=1, maximum=0, exact=0, sign=Optional(oneOf("- +")), parseAct=toInteger
+):
     """Parses any number as a integer."""
-    integer(name,
-         minimum=minimum,
-         maximum=maximum,
-         exact=exact,
-         sign=sign,
-         parseAct=parseAct)
+    integer(
+        name,
+        minimum=minimum,
+        maximum=maximum,
+        exact=exact,
+        sign=sign,
+        parseAct=parseAct,
+    )
 
-def number_as_string(name,
-                    minimum=1,
-                    maximum=None,
-                    exact=0,
-                    sign=Optional(oneOf("- +")),
-                    parseAct=toString):
+
+def number_as_string(
+    name,
+    minimum=1,
+    maximum=None,
+    exact=0,
+    sign=Optional(oneOf("- +")),
+    parseAct=toString,
+):
     """Parses any number as a string."""
-    real(name,
-         minimum=minimum,
-         maximum=maximum,
-         exact=exact,
-         sign=sign,
-         parseAct=parseAct)
+    real(
+        name,
+        minimum=minimum,
+        maximum=maximum,
+        exact=exact,
+        sign=sign,
+        parseAct=parseAct,
+    )
+
 
 def insert(name, value):
     extra_dict[name] = value
@@ -349,6 +344,7 @@ class ParsedString(str):
     String class inherited from 'str' plus a dictionary of parsed
     values and a line number.
     """
+
     def __init__(self, *args, **kw):
         str.__init__(args, kw)
         self.parsed_dict = {}
@@ -385,10 +381,10 @@ class ParseFileLineByLine:
     supported for .Z files).
     """
 
-    def __init__(self, filename, def_filename=None, mode = 'r'):
+    def __init__(self, filename, def_filename=None, mode="r"):
         """Opens input file, and if available the definition file.  If the
         definition file is available __init__ will then create some pyparsing
-        helper variables.  """
+        helper variables."""
 
         filen, file_extension = os.path.splitext(filename)
 
@@ -396,6 +392,7 @@ class ParseFileLineByLine:
         # as files.  Test to see whether it is available.
         try:
             import filelike
+
             tmp_open = filelike.open
         except ImportError:
             tmp_open = open
@@ -510,7 +507,7 @@ class ParseFileLineByLine:
         self.file.flush()
 
 
-#=============================
+# =============================
 def main(pargs):
     """This should only be used for testing. The primary mode of operation is
     as an imported library.
@@ -521,28 +518,29 @@ def main(pargs):
         print(i)
 
 
-#-------------------------
-if __name__ == '__main__':
+# -------------------------
+if __name__ == "__main__":
     ftn = "main"
-    opts, pargs = getopt.getopt(sys.argv[1:], 'hvd',
-                 ['help', 'version', 'debug', 'bb='])
+    opts, pargs = getopt.getopt(
+        sys.argv[1:], "hvd", ["help", "version", "debug", "bb="]
+    )
     for opt in opts:
-        if opt[0] == '-h' or opt[0] == '--help':
-            print(modname+": version="+__version__)
+        if opt[0] == "-h" or opt[0] == "--help":
+            print(modname + ": version=" + __version__)
             usage()
             sys.exit(0)
-        elif opt[0] == '-v' or opt[0] == '--version':
-            print(modname+": version="+__version__)
+        elif opt[0] == "-v" or opt[0] == "--version":
+            print(modname + ": version=" + __version__)
             sys.exit(0)
-        elif opt[0] == '-d' or opt[0] == '--debug':
+        elif opt[0] == "-d" or opt[0] == "--debug":
             debug_p = 1
-        elif opt[0] == '--bb':
+        elif opt[0] == "--bb":
             opt_b = opt[1]
 
-    #---make the object and run it---
+    # ---make the object and run it---
     main(pargs)
 
-#===Revision Log===
-#Created by mkpythonproj:
-#2006-02-06  Tim Cera
+# ===Revision Log===
+# Created by mkpythonproj:
+# 2006-02-06  Tim Cera
 #

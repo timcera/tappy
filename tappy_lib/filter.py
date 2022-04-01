@@ -36,17 +36,18 @@ EXAMPLES:
 #    675 Mass Ave, Cambridge, MA 02139, USA.
 """
 
-#===imports======================
+# ===imports======================
 import numpy as np
 
-#===globals======================
+# ===globals======================
 modname = "filter"
 
-#===utilities====================
+# ===utilities====================
 def msg(txt):
     """Send message to stdout."""
     sys.stdout.write(txt)
     sys.stdout.flush()
+
 
 def debug(ftn, txt):
     """Used for debugging."""
@@ -54,27 +55,32 @@ def debug(ftn, txt):
         sys.stdout.write("%s.%s:%s\n" % (modname, ftn, txt))
         sys.stdout.flush()
 
+
 def fatal(ftn, txt):
     """If can't continue."""
     msg = "%s.%s:FATAL:%s\n" % (modname, ftn, txt)
-    raise SystemExit, msg
+    raise SystemExit(msg)
+
 
 def usage():
     """Prints the docstring."""
-    print __doc__
+    print(__doc__)
 
-#====================================
+
+# ====================================
+
 
 def fft_lowpass(nelevation, low_bound, high_bound):
-    """ Performs a low pass filter on the nelevation series.
+    """Performs a low pass filter on the nelevation series.
     low_bound and high_bound specifes the boundary of the filter.
     """
     import numpy.fft as F
+
     if len(nelevation) % 2:
         result = F.rfft(nelevation, len(nelevation))
     else:
         result = F.rfft(nelevation)
-    freq = F.fftfreq(len(nelevation))[:len(nelevation)/2]
+    freq = F.fftfreq(len(nelevation))[: len(nelevation) / 2]
     factor = np.ones_like(result)
     factor[freq > low_bound] = 0.0
 
@@ -85,13 +91,13 @@ def fft_lowpass(nelevation, low_bound, high_bound):
     a = np.arange(len(a) + 2).astype(float)[::-1]
 
     # Ramp from 1 to 0 exclusive
-    a = (a/a[0])[1:-1]
+    a = (a / a[0])[1:-1]
 
     # Insert ramp into factor
     factor[sl] = a
 
     result = result * factor
-    print 'result=', len(result)
+    print("result=", len(result))
     relevation = F.irfft(result, len(nelevation))
-    print 'result=', len(relevation)
+    print("result=", len(relevation))
     return relevation
