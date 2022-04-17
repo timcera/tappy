@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-from __future__ import print_function
-
 """
 NAME:
     sparser.py
@@ -49,8 +47,6 @@ EXAMPLES:
 import sys
 import os
 import getopt
-import re
-import gzip
 import datetime
 
 from pyparsing import *
@@ -83,13 +79,13 @@ def msg(txt):
 def debug(ftn, txt):
     """Used for debugging."""
     if debug_p:
-        sys.stdout.write("%s.%s:%s\n" % (modname, ftn, txt))
+        sys.stdout.write(f"{modname}.{ftn}:{txt}\n")
         sys.stdout.flush()
 
 
 def fatal(ftn, txt):
     """If can't continue."""
-    msg = "%s.%s:FATAL:%s\n" % (modname, ftn, txt)
+    msg = f"{modname}.{ftn}:FATAL:{txt}\n"
     raise SystemExit(msg)
 
 
@@ -136,11 +132,7 @@ def toDatetime(instring, loc, tokenlist):
     global _origin
     global _unit
 
-    exec(
-        "rvar = _origin + datetime.timedelta({0}={1})".format(
-            _unit, float(tokenlist[0])
-        )
-    )
+    exec(f"rvar = _origin + datetime.timedelta({_unit}={float(tokenlist[0])})")
     return rvar
 
 
@@ -170,7 +162,15 @@ def negative_integer(name, minimum=1, maximum=0, exact=0):
     integer(name, minimum=minimum, maximum=maximum, exact=exact, sign="-")
 
 
-def real(name, required_decimal=True, sign=Optional(oneOf("- +")), parseAct=toFloat):
+def real(
+    name,
+    required_decimal=True,
+    sign=Optional(oneOf("- +")),
+    parseAct=toFloat,
+    minimum=1,
+    maximum=0,
+    exact=0,
+):
     """Appends a skip/real pair to the parse constructs."""
     if required_decimal:
         lword = Combine(
@@ -207,7 +207,7 @@ def real_as_string(
         minimum=minimum,
         maximum=maximum,
         exact=exact,
-        sign=Optional("- +"),
+        sign=sign,
         parseAct=parseAct,
     )
 
@@ -221,7 +221,7 @@ def integer_as_string(
         minimum=minimum,
         maximum=maximum,
         exact=exact,
-        sign=Optional("+"),
+        sign=sign,
         parseAct=parseAct,
     )
 
@@ -256,7 +256,7 @@ def real_as_datetime(
     global _unit
     _origin = origin
     _unit = unit
-    real(name, sign=Optional("- +"), parseAct=toDatetime)
+    real(name, sign=Optional("- +"), parseAct=parseAct)
 
 
 def integer_as_datetime(
@@ -278,8 +278,8 @@ def integer_as_datetime(
         minimum=minimum,
         maximum=maximum,
         exact=exact,
-        sign=Optional("- +"),
-        parseAct=toDatetime,
+        sign=sign,
+        parseAct=parseAct,
     )
 
 
@@ -386,7 +386,7 @@ class ParseFileLineByLine:
         definition file is available __init__ will then create some pyparsing
         helper variables."""
 
-        filen, file_extension = os.path.splitext(filename)
+        filen, _ = os.path.splitext(filename)
 
         # I use filelike which allows you to open up compressed files and urls
         # as files.  Test to see whether it is available.
@@ -452,25 +452,25 @@ class ParseFileLineByLine:
 
     def __getitem__(self, item):
         """Used in 'for line in fp:' idiom."""
-        line = self.readline()
-        if not line:
+        iline = self.readline()
+        if not iline:
             raise IndexError
-        return line
+        return iline
 
     def readline(self):
         """Reads (and optionally parses) a single line."""
-        line = self.file.readline()
-        line = ParsedString(line)
+        iline = self.file.readline()
+        iline = ParsedString(iline)
         self.line_number = self.line_number + 1
-        line.line_number = self.line_number
-        if self.grammar and line:
+        iline.line_number = self.line_number
+        if self.grammar and iline:
             try:
-                line.parsed_dict = self.grammar.parseString(line).asDict()
-                for key in extra_dict.keys():
-                    line.parsed_dict[key] = extra_dict[key]
+                iline.parsed_dict = self.grammar.parseString(iline).asDict()
+                for key, val in extra_dict.items():
+                    iline.parsed_dict[key] = val
             except ParseException:
-                line.parsed_dict = {}
-        return line
+                iline.parsed_dict = {}
+        return iline
 
     def readlines(self):
         """Returns a list of all lines (optionally parsed) in the file."""
@@ -480,10 +480,10 @@ class ParseFileLineByLine:
             # self.file.readlines() so that there wasn't two copies of the file
             # in memory.
             while 1:
-                line = self.readline()
-                if not line:
+                iline = self.readline()
+                if not iline:
                     break
-                tot.append(line)
+                tot.append(iline)
             return tot
         return self.file.readlines()
 
@@ -491,12 +491,12 @@ class ParseFileLineByLine:
         """Write to a file."""
         self.file.write(data)
 
-    def writelines(self, list):
+    def writelines(self, ilist):
         """Write a list to a file. Each item in the list is a line in the
         file.
         """
-        for line in list:
-            self.file.write(line)
+        for iline in ilist:
+            self.file.write(iline)
 
     def close(self):
         """Close the file."""
@@ -539,8 +539,3 @@ if __name__ == "__main__":
 
     # ---make the object and run it---
     main(pargs)
-
-# ===Revision Log===
-# Created by mkpythonproj:
-# 2006-02-06  Tim Cera
-#

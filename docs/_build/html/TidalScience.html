@@ -1,0 +1,154 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Force Due to Gravity &#8212; tappy 0.9.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/pyramid.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Contributing" href="contributing.html" />
+    <link rel="prev" title="&lt;no title&gt;" href="HarmonicAnalysis.html" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
+  </head><body>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="contributing.html" title="Contributing"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="HarmonicAnalysis.html" title="&lt;no title&gt;"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">tappy 0.9.2 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Force Due to Gravity</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <p>[TOC]</p>
+<section id="force-due-to-gravity">
+<h1>Force Due to Gravity<a class="headerlink" href="#force-due-to-gravity" title="Permalink to this headline">¶</a></h1>
+<p>The force due to gravity between two objects &lt;math&gt;m_1&lt;/math&gt; and
+&lt;math&gt;m_2&lt;/math&gt; is defined by the following equation.</p>
+<p>&lt;math&gt; F_{12} = <a href="#id1"><span class="problematic" id="id2">:raw-latex:`\frac{-Gm_1m_2}{r^2}`</span></a> &lt;/math&gt;</p>
+<p>&lt;math&gt;
+<a href="#id3"><span class="problematic" id="id4">:raw-latex:`\begin{align} F_{12} &amp;amp;=&amp;amp; \mbox{gravitational force between }m_1\mbox{ and }m_2 \\\ m_1 &amp;amp;=&amp;amp; \mbox{mass of object 1} \\\ m_2 &amp;amp;=&amp;amp; \mbox{mass of object 2} \\\ G &amp;amp;=&amp;amp; \mbox{gravitational constant }(6.673*10^{-11}m^3kg^{-1}s^{-2}) \\\ r &amp;amp;=&amp;amp; \mbox{distance between the centers of }m_1\mbox{ and }m_2 \\\ \end{align}`</span></a>
+&lt;/math&gt;</p>
+</section>
+<section id="tidal-forces">
+<h1>Tidal Forces<a class="headerlink" href="#tidal-forces" title="Permalink to this headline">¶</a></h1>
+<p>The tidal force is the rate of change of gravity with distance. For the
+math minded you can differentiate the equation of force due to gravity,
+or approximate the tidal force by finding the gravitational force
+differences between two points.</p>
+<p>&lt;math&gt; F_{cg} = <a href="#id5"><span class="problematic" id="id6">:raw-latex:`\frac{-Gm_1}{r^2}`</span></a> &lt;/math&gt;</p>
+<p>&lt;math&gt;
+<a href="#id7"><span class="problematic" id="id8">:raw-latex:`\begin{align} F_{cg} &amp;amp;=&amp;amp; \mbox{gravitational force between }m_1\mbox{ to the center of the Earth } \\\ m_1 &amp;amp;=&amp;amp; \mbox{mass of object 1} \\\ G &amp;amp;=&amp;amp; \mbox{gravitational constant }(6.673*10^{-11}m^{3}kg^{-1}s^{-2}) \\\ r &amp;amp;=&amp;amp; \mbox{distance between the centers of }m_1\mbox{ and }m_2 \\\ \end{align}`</span></a>
+&lt;/math&gt;</p>
+<p>&lt;math&gt; F_{ng} =
+<a href="#id9"><span class="problematic" id="id10">:raw-latex:`\frac{-Gm_1}{\left (r - R_{earth}\right) ^2}`</span></a> &lt;/math&gt;</p>
+<p>&lt;math&gt;
+<a href="#id11"><span class="problematic" id="id12">:raw-latex:`\begin{align} F_{ng} &amp;amp;=&amp;amp; \mbox{gravitational force from }m_1\mbox{ to the nearest surface of the Earth to }m_1 \\\ m_1 &amp;amp;=&amp;amp; \mbox{mass of object 1} \\\ G &amp;amp;=&amp;amp; \mbox{gravitational constant }(6.673*10^{-11}m^{3}kg^{-1}s^{-2}) \\\ r &amp;amp;=&amp;amp; \mbox{distance between the centers of }m_1\mbox{ and }m_2 \\\ R_{earth} &amp;amp;=&amp;amp; \mbox{radius of the Earth} \\\ \end{align}`</span></a>
+&lt;/math&gt;</p>
+<p>&lt;math&gt; F_{fg} =
+<a href="#id13"><span class="problematic" id="id14">:raw-latex:`\frac{-Gm_1}{\left (r + R_{earth}\right) ^2}`</span></a> &lt;/math&gt;</p>
+<p>&lt;math&gt;
+<a href="#id15"><span class="problematic" id="id16">:raw-latex:`\begin{align} F_{fg} &amp;amp;=&amp;amp; \mbox{gravitational force from }m_1\mbox{ to the farthest surface of the Earth from }m_1 \\\ m_1 &amp;amp;=&amp;amp; \mbox{mass of object 1} \\\ G &amp;amp;=&amp;amp; \mbox{gravitational constant }(6.673*10^{-11}m^{3}kg^{-1}s^{-2}) \\\ r &amp;amp;=&amp;amp; \mbox{distance between the centers of }m_1\mbox{ and }m_2 \\\ R_{earth} &amp;amp;=&amp;amp; \mbox{radius of the Earth} \\\ \end{align}`</span></a>
+&lt;/math&gt;</p>
+<section id="double-bulge">
+<h2>Double Bulge<a class="headerlink" href="#double-bulge" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+<section id="spring-neap-tides">
+<h1>Spring/Neap Tides<a class="headerlink" href="#spring-neap-tides" title="Permalink to this headline">¶</a></h1>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Force Due to Gravity</a></li>
+<li><a class="reference internal" href="#tidal-forces">Tidal Forces</a><ul>
+<li><a class="reference internal" href="#double-bulge">Double Bulge</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#spring-neap-tides">Spring/Neap Tides</a></li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="HarmonicAnalysis.html"
+                        title="previous chapter">&lt;no title&gt;</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="contributing.html"
+                        title="next chapter">Contributing</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/TidalScience.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="contributing.html" title="Contributing"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="HarmonicAnalysis.html" title="&lt;no title&gt;"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">tappy 0.9.2 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Force Due to Gravity</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2013, Tim Cera, P.E..
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.3.0.
+    </div>
+  </body>
+</html>

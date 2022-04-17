@@ -1,104 +1,94 @@
-"""
-NAME:
-    setup.py
+# -*- coding: utf-8 -*-
 
-SYNOPSIS:
-    python setup.py [options] [command]
+import os
+import shlex
+import subprocess
+import sys
 
-DESCRIPTION:
-    Using distutils "setup", build, install, or make tarball of the package.
+from setuptools import find_packages, setup
 
-OPTIONS:
-    See Distutils documentation for details on options and commands.
-    Common commands:
-    build               build the package, in preparation for install
-    install             install module(s)/package(s) [runs build if needed]
-    install_data        install datafiles (e.g., in a share dir)
-    install_scripts     install executable scripts (e.g., in a bin dir)
-    sdist               make a source distribution
-    bdist               make a binary distribution
-    clean               remove build temporaries
+# temporarily redirect config directory to prevent matplotlib importing
+# testing that for writeable directory which results in sandbox error in
+# certain easy_install versions
+os.environ["MPLCONFIGDIR"] = "."
 
-EXAMPLES:
-    cd mydir
-    (cp myfile-0.1.tar.gz here)
-    gzip -cd myfile-0.1.tar.gz | tar xvf -
-    cd myfile-0.1
-    python setup.py build
-    python setup.py install
-    python setup.py sdist
-"""
+pkg_name = "tappy"
 
-# ===imports=============
-import os, sys, re, string, getopt, shutil, subprocess
+version = open("VERSION").readline().strip()
 
-# Let's see if ez_setup is installed
-try:
-    from setuptools import setup
-except ImportError:
-    from distutils.core import setup
+if sys.argv[-1] == "publish":
+    subprocess.run(shlex.split("cleanpy ."))
+    subprocess.run(shlex.split("python setup.py sdist"))
+    subprocess.run(shlex.split(f"twine upload dist/{pkg_name}-{version}.tar.gz"))
+    sys.exit()
 
-# ===globals======
-modname = "setup"
-debug_p = 0
+README = open("README.rst").read()
 
-# ===configuration======
-pkgname = "tappy"
-version_text = string.strip(open("VERSION").readline())
-exec_prefix = sys.exec_prefix
-description = "Tidal Analysis Program in PYthon"
-long_description = "TAPPY is a tidal analysis package. It breaks down an hourly record of water levels into the component sine waves. It is written in Python and uses the least squares optimization and other functions in SciPy?. The focus is to make the most accurate analysis possible. TAPPY only determines the constituents that are calculatable according to the length of the time series."
-download_url = "http://prdownloads.sourceforge.net/tappy/tappy-0.9.0.tar.gz?download"
-author = "Tim Cera"
-author_email = "timcera@earthlink.net"
-url = "http://tappy.sourceforge.net"
-license = "GPL-2"
-
-scripts = ["tappy.py"]
-packages = [
-    "tappy_lib",
+install_requires = [
+    # List your project dependencies here.
+    # For more details, see:
+    # http://packages.python.org/distribute/setuptools.html#declaring-dependencies
+    "astronomia",
+    "pyparsing",
+    "filelike",
 ]
 
-install_requires = ["Baker>=1.3", "pyparsing", "astronomia", "filelike"]
+extras_require = {
+    "dev": [
+        "black",
+        "cleanpy",
+        "twine",
+        "pytest",
+        "coverage[toml]",
+        "flake8",
+        "pytest-cov",
+        "pytest-mpl",
+        "pre-commit",
+        "black-nbconvert",
+        "blacken-docs",
+        "velin",
+        "isort",
+        "pyroma",
+        "pyupgrade",
+        "commitizen",
+    ]
+}
 
-# ===utilities==========================
-def debug(ftn, txt):
-    if debug_p:
-        sys.stdout.write("%s.%s:%s\n" % (modname, ftn, txt))
-        sys.stdout.flush()
-
-
-def fatal(ftn, txt):
-    msg = "%s.%s:FATAL:%s\n" % (modname, ftn, txt)
-    raise SystemExit(msg)
-
-
-def usage():
-    print(__doc__)
-
-
-# =============================
-# patch distutils if it can't cope with the "classifiers" or
-# "download_url" keywords
-from sys import version
-
-if version < "2.2.3":
-    from distutils.dist import DistributionMetadata
-
-    DistributionMetadata.classifiers = None
-    DistributionMetadata.download_url = None
-setup(  # ---meta-data---
-    name=pkgname,
-    version=version_text,
-    description=description,
-    long_description=long_description,
-    download_url=download_url,
-    author=author,
-    author_email=author_email,
-    url=url,
-    license=license,
-    # ---scripts,modules and packages---
-    scripts=scripts,
-    packages=packages,
+setup(
+    name=pkg_name,
+    version=version,
+    description="Tidal Analysis Program - Python",
+    long_description=README,
+    classifiers=[
+        # Get strings from
+        # http://pypi.python.org/pypi?%3Aaction=list_classifiers
+        "Development Status :: 5 - Production/Stable",
+        "Intended Audience :: Science/Research",
+        "Intended Audience :: End Users/Desktop",
+        "Intended Audience :: Developers",
+        "Environment :: Console",
+        "License :: OSI Approved :: BSD License",
+        "Natural Language :: English",
+        "Operating System :: OS Independent",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Topic :: Scientific/Engineering :: Information Analysis",
+        "Topic :: Scientific/Engineering",
+        "Topic :: Software Development :: Libraries :: Python Modules",
+    ],  # strings from http://pypi.python.org/pypi?%3Aaction=list_classifiers
+    keywords="time_series",
+    author="Tim Cera, PE",
+    author_email="tim@cerazone.net",
+    url=f"http://timcera.bitbucket.io/{pkg_name}/docs/index.html",
+    license="BSD",
+    packages=find_packages("src"),
+    package_dir={"": "src"},
+    include_package_data=True,
+    zip_safe=False,
     install_requires=install_requires,
+    extras_require=extras_require,
+    entry_points={"console_scripts": [f"{pkg_name}={pkg_name}.{pkg_name}:main"]},
+    test_suite="tests",
+    python_requires=">=3.7.1",
 )

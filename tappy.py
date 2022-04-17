@@ -249,17 +249,17 @@ class Util:
         fp.write("{0}".format(y.shape))
         fp.write(fname)
         if isinstance(y, dict):
-            for key in y.keys():
-                nfname = "%s_%s.dat" % (os.path.splitext(fname)[-2], key)
+            for key in list(y.keys()):
+                nfname = f"{os.path.splitext(fname)[-2]}_{key}.dat"
                 self.write_file(x, y[key], fname=nfname)
         else:
             if fname == "-":
                 for d, v in zip(x, y):
-                    print("%s %f" % (d.isoformat(), v))
+                    print(f"{d.isoformat()} {v}")
             else:
                 fpo = open(fname, "w")
                 for d, v in zip(x, y):
-                    fpo.write("%s %f\n" % (d.isoformat(), v))
+                    fpo.write(f"{d.isoformat()} {v}")
 
     def astronomic(self, dates):
         """
@@ -537,7 +537,7 @@ class Util:
             "FF": (
                 self.tidal_dict["O1"]["FF"]
                 * (2.31 + 1.435 * np.cos(2.0 * kap_p)) ** 0.5
-                / 2.307**0.5
+                / 2.307 ** 0.5
             ),
         }
         self.tidal_dict["MN4"] = {
@@ -978,19 +978,19 @@ class tappy(Util):
         # Read and parse data filename
         fp = sparser.ParseFileLineByLine(filename, def_filename=def_filename, mode="r")
         for line in fp:
-            if "water_level" not in line.parsed_dict.keys():
+            if "water_level" not in list(line.parsed_dict.keys()):
                 print(
                     "Warning: record %i did not parse according to the supplied definition file"
                     % line.line_number
                 )
                 continue
-            if "datetime" in line.parsed_dict.keys():
+            if "datetime" in list(line.parsed_dict.keys()):
                 self.dates.append(line.parsed_dict["datetime"])
             elif (
-                "year" in line.parsed_dict.keys()
-                and "month" in line.parsed_dict.keys()
-                and "day" in line.parsed_dict.keys()
-                and "hour" in line.parsed_dict.keys()
+                "year" in list(line.parsed_dict.keys())
+                and "month" in list(line.parsed_dict.keys())
+                and "day" in list(line.parsed_dict.keys())
+                and "hour" in list(line.parsed_dict.keys())
             ):
                 line.parsed_dict.setdefault("minute", 0)
                 line.parsed_dict.setdefault("second", 0)
@@ -2038,7 +2038,9 @@ def prediction(
     except ValueError:
         pass
 
-    calcdates = np.array(range(len(u.dates)), dtype=np.float64) * float(interval) / 60.0
+    calcdates = (
+        np.array(list(range(len(u.dates))), dtype=np.float64) * float(interval) / 60.0
+    )
     prediction = prediction + u.sum_signals(skey_list, calcdates, u.tidal_dict)
 
     u.write_file(u.dates, prediction, fname=fname)

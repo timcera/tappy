@@ -1,0 +1,483 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Input Data &#8212; tappy 0.9.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/pyramid.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="&lt;no title&gt;" href="FillMissing.html" />
+    <link rel="prev" title="The Program" href="TappyDoc.html" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
+  </head><body>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="FillMissing.html" title="&lt;no title&gt;"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="TappyDoc.html" title="The Program"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">tappy 0.9.2 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Input Data</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <p>Typically the node factor from the middle of the time series is used for
+tidal analysis. This is fine for relatively short time series. TAPPy
+actually calculates the node factor for each point in the time series
+and is therefore suited to long time series. TAPPy will also only report
+the tidal constituents that can be resolved based on the length of the
+input time series.</p>
+<p>[TOC]</p>
+<section id="input-data">
+<h1>Input Data<a class="headerlink" href="#input-data" title="Permalink to this headline">¶</a></h1>
+<p>The input data can be in almost any text form as long as each line has
+either (‘year’, ‘month’, ‘day’, ‘hour’, optional[‘minute’, ‘second’]) OR
+a single real or integer number representing time since an origin, and
+‘water elevation’. Time can be to any standard, though UTC is preferred.
+TAPPy will maintain the input time throughout the analysis, but the only
+way to calculate phases to compare against other tidal constituents is
+to use UTC. The units for the water elevation can be anything and the
+output amplitude will be in the input units.</p>
+</section>
+<section id="definition-file">
+<h1>Definition File<a class="headerlink" href="#definition-file" title="Permalink to this headline">¶</a></h1>
+<p>The glue that binds the input format to TAPPy is a definition file. It
+is easy to understand and implement. Basically it tells TAPPy how to
+parse the input data file. Delimiters and white space are ignored,
+actually anything in the way of TAPPy finding the next value is ignored.</p>
+<p>The definition file is a Python file (though with a .def extension) that
+specifies the order that values can be found on each line. Two variables
+are set within the definition file, ‘decimal_sep’ and ‘parse’. The
+‘decimal_sep’ is set to the separator that marks the decimal part of a
+real number. In most of Europe this would be a “,” whereas for the
+United States it is a “.”. The ‘parse’ variable is where the magic
+happens. It is an ordered list of Python functions that retrieve and
+name values from each line in the order specified. TAPPy requires the
+following named values; ‘water_level’, and either ‘datetime’ or the
+group of (‘year’, ‘month’, ‘day’, ‘hour’, ‘minute’, ‘second’). If the
+later selection to define the time stamp is used and ‘minute’ and
+‘second’ are not specified they are both set to zero. All other names
+(like ‘state’ and ‘station’ in the example below) are parsed, but
+ignored by TAPPy.</p>
+<section id="example-definition-file">
+<h2>Example Definition File<a class="headerlink" href="#example-definition-file" title="Permalink to this headline">¶</a></h2>
+<table><tr><th><p>Definition File</p>
+</th><th><p>Matching Data File</p>
+</th></tr><tr><td><section id="you-need-to-specify-the-separator-between">
+<h3>You need to specify the separator between<a class="headerlink" href="#you-need-to-specify-the-separator-between" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="the-integer-part-and-the-decimal">
+<h3>the integer part and the decimal<a class="headerlink" href="#the-integer-part-and-the-decimal" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="part-of-real-numbers-even-if-you-only">
+<h3>part of real numbers, even if you only<a class="headerlink" href="#part-of-real-numbers-even-if-you-only" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="have-integers-in-your-data-file">
+<h3>have integers in your data file.<a class="headerlink" href="#have-integers-in-your-data-file" title="Permalink to this headline">¶</a></h3>
+<p>decimal_sep = “.” # TAPPy needs the variables ‘year’, ‘month’, # ‘day’,
+‘hour’, ‘minute’, ‘water_level’. # Any other variable name can be used
+as a # placeholder. parse = [ integer(‘state’, exact=3),
+integer_as_string(‘station’, exact=4), positive_integer(‘year’,
+exact=4), positive_integer(‘month’, exact=2), positive_integer(‘day’,
+exact=2), positive_integer(‘hour’), positive_integer(‘minute’),
+positive_integer(‘toss’), real(‘water_level’), ]</p>
+</td><td><p>Station Date Time Pred 6 Vrfy 6 DCP#: 1 Units: Feet Feet Data%: MLLW GMT
+100.00 100.00 Maximum: 5.00 Minimum: -0.91 ““——- ——– —– ——- ——-””
+8721604 20061109 00:00 2.03 2.23 8721604 20061109 00:06 2.11 2.32
+8721604 20061109 00:12 2.19 2.38 8721604 20061109 00:18 2.28 2.41
+8721604 20061109 00:24 2.36 2.55 …</p>
+</td></tr></table><p>The example definition file above would correctly parse the data format
+used by COOPS. <a class="reference external" href="http://tidesandcurrents.noaa.gov/data_menu.shtml?bdate=20061109&amp;bdate_Month=10&amp;edate=20061210&amp;edate_Month=11&amp;wl_sensor_hist=W1&amp;relative=&amp;datum=6&amp;unit=1&amp;shift=g&amp;stn=8721604+Trident+Pier%2C+FL&amp;type=Historic+Tide+Data&amp;format=View+Data">Example data for Trident Pier, Florida, USA from
+COOPS.</a></p>
+<p>List of functions that can appear in the definition file.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 75%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Function name</p></th>
+<th class="head"><p>Find the next …</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>integer(name, minimum=1, maximum=None, exact=None)</p></td>
+<td><p>integer</p></td>
+</tr>
+<tr class="row-odd"><td><p>positive_integer(name, minimum=1, maximum=None,
+exact=None)</p></td>
+<td><p>positive
+integer (‘+’ is
+optional)</p></td>
+</tr>
+<tr class="row-even"><td><p>negative_integer(name, minimum=1, maximum=None,
+exact=None)</p></td>
+<td><p>negative
+integer</p></td>
+</tr>
+<tr class="row-odd"><td><p>real(name)</p></td>
+<td><p>real</p></td>
+</tr>
+<tr class="row-even"><td><p>real_as_datetime(‘datetime’,
+origin=datetime.datetime(1900,1,1), unit=‘days’)</p></td>
+<td><p>indexed time,
+(days since… or
+hours since…)
+origin and unit
+have to be
+compatible with
+Python
+datetime. The
+name will
+always be
+‘datetime’.</p></td>
+</tr>
+<tr class="row-odd"><td><p>integer_as_datetime(‘datetime’, minimum=1,
+maximum=None, exact=None,
+origin=datetime.datetime(1900,1,1), unit=‘days’)</p></td>
+<td><p>indexed time
+(days since… or
+hours since…),
+origin and unit
+have to be
+compatible with
+Python
+datetime. The
+name will
+always be
+‘datetime’.</p></td>
+</tr>
+<tr class="row-even"><td><p>positive_real(name)</p></td>
+<td><p>positive real
+(‘+’ is
+optional)</p></td>
+</tr>
+<tr class="row-odd"><td><p>negative_real(name)</p></td>
+<td><p>negative real</p></td>
+</tr>
+<tr class="row-even"><td><p>number(name)</p></td>
+<td><p>an integer or a
+real</p></td>
+</tr>
+<tr class="row-odd"><td><p>number_as_real(name)</p></td>
+<td><p>an integer or a
+real, converted
+to a real using
+float()</p></td>
+</tr>
+<tr class="row-even"><td><p>number_as_integer(name)</p></td>
+<td><p>an integer or a
+real, converted
+to an integer
+using int()</p></td>
+</tr>
+</tbody>
+</table>
+<p>Additional general purpose parsing functions probably not useful to
+TAPPy users.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 46%" />
+<col style="width: 54%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Function name</p></th>
+<th class="head"><p>Find the next …</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>real_as_string(name)</p></td>
+<td><p>real, but return as a string</p></td>
+</tr>
+<tr class="row-odd"><td><p>integer_as_string(name,
+minimum=1, maximum=None,
+exact=None)</p></td>
+<td><p>integer, but return as string</p></td>
+</tr>
+<tr class="row-even"><td><p>qstring(name)</p></td>
+<td><p>quoted string (single or double)</p></td>
+</tr>
+<tr class="row-odd"><td><p>delimited_as_string(name)</p></td>
+<td><p>any group of letters and/or numbers</p></td>
+</tr>
+<tr class="row-even"><td><p>string(name, exact=None)</p></td>
+<td><p>any group of letters, numbers,
+and/or spaces</p></td>
+</tr>
+<tr class="row-odd"><td><p>number_as_string(name)</p></td>
+<td><p>and number as string</p></td>
+</tr>
+<tr class="row-even"><td><p>insert(name, value)</p></td>
+<td><p>sets name to value</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+</section>
+<section id="filters">
+<h1>Filters<a class="headerlink" href="#filters" title="Permalink to this headline">¶</a></h1>
+<p>[CompareTidalFilters]</p>
+</section>
+<section id="command-line-arguments">
+<h1>Command Line Arguments<a class="headerlink" href="#command-line-arguments" title="Permalink to this headline">¶</a></h1>
+<section id="subcommands">
+<h2>Subcommands<a class="headerlink" href="#subcommands" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tappy</span><span class="o">.</span><span class="n">py</span>
+
+
+<span class="n">Usage</span><span class="p">:</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">tappy</span><span class="o">.</span><span class="n">py</span> <span class="n">COMMAND</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">options</span><span class="o">&amp;</span><span class="n">gt</span><span class="p">;</span>
+
+<span class="n">Available</span> <span class="n">commands</span><span class="p">:</span>
+
+ <span class="n">analysis</span>     <span class="n">Traditional</span> <span class="n">analysis</span> <span class="k">with</span> <span class="n">separately</span> <span class="n">calculated</span> <span class="n">nodal</span> <span class="n">factors</span><span class="o">.</span>
+              <span class="n">Constituent</span> <span class="n">amplitude</span> <span class="n">units</span> <span class="n">are</span> <span class="n">the</span> <span class="n">same</span> <span class="k">as</span> <span class="n">the</span> <span class="nb">input</span> <span class="n">heights</span><span class="o">.</span>
+              <span class="n">Constituent</span> <span class="n">phases</span> <span class="n">are</span> <span class="n">based</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">same</span> <span class="n">time</span> <span class="n">zone</span> <span class="k">as</span> <span class="n">the</span>
+              <span class="n">dates</span><span class="o">.</span>
+ <span class="n">prediction</span>   <span class="n">Prediction</span> <span class="n">based</span> <span class="n">upon</span> <span class="n">earlier</span> <span class="n">constituent</span> <span class="n">analysis</span> <span class="n">saved</span> <span class="ow">in</span>
+              <span class="n">IHOTC</span> <span class="n">XML</span> <span class="n">transfer</span> <span class="nb">format</span><span class="o">.</span>
+ <span class="n">writeconfig</span>  <span class="n">OVERWRITES</span> <span class="n">an</span> <span class="n">ini</span> <span class="n">style</span> <span class="n">config</span> <span class="n">file</span> <span class="n">that</span> <span class="n">holds</span> <span class="nb">all</span> <span class="n">of</span> <span class="n">default</span>
+              <span class="n">the</span> <span class="n">command</span> <span class="n">line</span> <span class="n">options</span><span class="o">.</span>
+
+<span class="n">Use</span> <span class="s2">&quot;/usr/bin/tappy.py &amp;lt;command&amp;gt; --help&quot;</span> <span class="k">for</span> <span class="n">individual</span> <span class="n">command</span> <span class="n">help</span><span class="o">.</span>
+</pre></div>
+</div>
+</section>
+<section id="analysis-arguments">
+<h2>Analysis Arguments<a class="headerlink" href="#analysis-arguments" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tappy</span><span class="o">.</span><span class="n">py</span> <span class="n">analysis</span> <span class="o">--</span><span class="n">help</span>
+
+
+<span class="n">Usage</span><span class="p">:</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">tappy</span><span class="o">.</span><span class="n">py</span> <span class="n">analysis</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">data_filename</span><span class="o">&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="p">[</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">def_filename</span><span class="o">&amp;</span><span class="n">gt</span><span class="p">;]</span> <span class="p">[</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">config</span><span class="o">&amp;</span><span class="n">gt</span><span class="p">;]</span> <span class="p">[</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">quiet</span><span class="o">&amp;</span><span class="n">gt</span><span class="p">;]</span> <span class="p">[</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">debug</span><span class="o">&amp;</span><span class="n">gt</span><span class="p">;]</span> <span class="p">[</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">outputts</span><span class="o">&amp;</span><span class="n">gt</span><span class="p">;]</span> <span class="p">[</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">outputxml</span><span class="o">&amp;</span><span class="n">gt</span><span class="p">;]</span> <span class="p">[</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">ephemeris</span><span class="o">&amp;</span><span class="n">gt</span><span class="p">;]</span> <span class="p">[</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">rayleigh</span><span class="o">&amp;</span><span class="n">gt</span><span class="p">;]</span> <span class="p">[</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">print_vau_table</span><span class="o">&amp;</span><span class="n">gt</span><span class="p">;]</span> <span class="p">[</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">missing_data</span><span class="o">&amp;</span><span class="n">gt</span><span class="p">;]</span> <span class="p">[</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">linear_trend</span><span class="o">&amp;</span><span class="n">gt</span><span class="p">;]</span> <span class="p">[</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">remove_extreme</span><span class="o">&amp;</span><span class="n">gt</span><span class="p">;]</span> <span class="p">[</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">zero_ts</span><span class="o">&amp;</span><span class="n">gt</span><span class="p">;]</span> <span class="p">[</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="nb">filter</span><span class="o">&amp;</span><span class="n">gt</span><span class="p">;]</span> <span class="p">[</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">pad_filters</span><span class="o">&amp;</span><span class="n">gt</span><span class="p">;]</span> <span class="p">[</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">include_inferred</span><span class="o">&amp;</span><span class="n">gt</span><span class="p">;]</span> <span class="p">[</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">xmlname</span><span class="o">&amp;</span><span class="n">gt</span><span class="p">;]</span> <span class="p">[</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">xmlcountry</span><span class="o">&amp;</span><span class="n">gt</span><span class="p">;]</span> <span class="p">[</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">xmllatitude</span><span class="o">&amp;</span><span class="n">gt</span><span class="p">;]</span> <span class="p">[</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">xmllongitude</span><span class="o">&amp;</span><span class="n">gt</span><span class="p">;]</span> <span class="p">[</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">xmltimezone</span><span class="o">&amp;</span><span class="n">gt</span><span class="p">;]</span> <span class="p">[</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">xmlcomments</span><span class="o">&amp;</span><span class="n">gt</span><span class="p">;]</span> <span class="p">[</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">xmlunits</span><span class="o">&amp;</span><span class="n">gt</span><span class="p">;]</span> <span class="p">[</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">xmldecimalplaces</span><span class="o">&amp;</span><span class="n">gt</span><span class="p">;]</span>
+
+<span class="n">Traditional</span> <span class="n">analysis</span> <span class="k">with</span> <span class="n">separately</span> <span class="n">calculated</span> <span class="n">nodal</span> <span class="n">factors</span><span class="o">.</span> <span class="n">Constituent</span>
+<span class="n">amplitude</span> <span class="n">units</span> <span class="n">are</span> <span class="n">the</span> <span class="n">same</span> <span class="k">as</span> <span class="n">the</span> <span class="nb">input</span> <span class="n">heights</span><span class="o">.</span> <span class="n">Constituent</span> <span class="n">phases</span> <span class="n">are</span>
+<span class="n">based</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">same</span> <span class="n">time</span> <span class="n">zone</span> <span class="k">as</span> <span class="n">the</span> <span class="n">dates</span><span class="o">.</span>
+
+<span class="n">Required</span> <span class="n">Arguments</span><span class="p">:</span>
+
+  <span class="n">data_filename</span>     <span class="n">The</span> <span class="n">time</span><span class="o">-</span><span class="n">series</span> <span class="n">of</span> <span class="n">elevations</span> <span class="n">to</span> <span class="n">be</span> <span class="n">analyzed</span><span class="o">.</span>
+
+<span class="n">Options</span><span class="p">:</span>
+
+   <span class="o">--</span><span class="n">rayleigh</span>          <span class="n">The</span> <span class="n">Rayleigh</span> <span class="n">coefficient</span> <span class="ow">is</span> <span class="n">used</span> <span class="n">to</span> <span class="n">compare</span> <span class="n">against</span>
+                       <span class="n">to</span> <span class="n">determine</span> <span class="n">time</span> <span class="n">series</span> <span class="n">length</span> <span class="n">to</span> <span class="n">differentiate</span>
+                       <span class="n">between</span> <span class="n">two</span> <span class="n">frequencies</span><span class="o">.</span> <span class="p">[</span><span class="n">default</span><span class="p">:</span> <span class="n">default</span><span class="p">]</span>
+
+   <span class="o">--</span><span class="n">xmlunits</span>          <span class="n">Not</span> <span class="n">used</span> <span class="ow">in</span> <span class="n">analysis</span><span class="o">.</span> <span class="n">Used</span> <span class="n">ONLY</span> <span class="n">to</span> <span class="n">complete</span> <span class="n">the</span> <span class="n">XML</span>
+                       <span class="n">file</span><span class="o">.</span> <span class="n">Units</span> <span class="n">of</span> <span class="n">the</span> <span class="n">observed</span> <span class="n">water</span> <span class="n">level</span><span class="o">.</span> <span class="n">Defaults</span> <span class="n">to</span>
+                       <span class="s1">&#39;m&#39;</span><span class="o">.</span>
+
+   <span class="o">--</span><span class="n">xmllongitude</span>      <span class="n">Not</span> <span class="n">used</span> <span class="ow">in</span> <span class="n">analysis</span><span class="o">.</span> <span class="n">Used</span> <span class="n">ONLY</span> <span class="n">to</span> <span class="n">complete</span> <span class="n">the</span> <span class="n">XML</span>
+                       <span class="n">file</span><span class="o">.</span> <span class="n">Longitude</span> <span class="n">of</span> <span class="n">the</span> <span class="n">station</span><span class="o">.</span> <span class="n">Defaults</span> <span class="n">to</span> <span class="mf">0.0</span><span class="o">.</span>
+
+   <span class="o">--</span><span class="n">missing_data</span>      <span class="n">What</span> <span class="n">should</span> <span class="n">be</span> <span class="n">done</span> <span class="k">if</span> <span class="n">there</span> <span class="ow">is</span> <span class="n">missing</span> <span class="n">data</span><span class="o">.</span> <span class="n">One</span> <span class="n">of</span><span class="p">:</span>
+                       <span class="n">fail</span><span class="p">,</span> <span class="n">ignore</span><span class="p">,</span> <span class="ow">or</span> <span class="n">fill</span><span class="o">.</span> <span class="p">[</span><span class="n">default</span><span class="p">:</span> <span class="n">default</span><span class="p">]</span>
+
+   <span class="o">--</span><span class="n">ephemeris</span>         <span class="n">Print</span> <span class="n">out</span> <span class="n">ephemeris</span> <span class="n">tables</span><span class="o">.</span>
+
+   <span class="o">--</span><span class="n">zero_ts</span>           <span class="n">Zero</span> <span class="n">the</span> <span class="nb">input</span> <span class="n">time</span> <span class="n">series</span> <span class="n">before</span> <span class="n">constituent</span>
+                       <span class="n">analysis</span> <span class="n">by</span> <span class="n">subtracting</span> <span class="n">filtered</span> <span class="n">data</span><span class="o">.</span> <span class="n">One</span> <span class="n">of</span><span class="p">:</span>
+                       <span class="n">transform</span><span class="p">,</span><span class="n">usgs</span><span class="p">,</span><span class="n">doodson</span><span class="p">,</span><span class="n">boxcar</span>
+
+   <span class="o">--</span><span class="n">pad_filters</span>       <span class="n">Pad</span> <span class="nb">input</span> <span class="n">data</span> <span class="nb">set</span> <span class="k">with</span> <span class="n">values</span> <span class="n">to</span> <span class="k">return</span> <span class="n">same</span> <span class="n">size</span>
+                       <span class="n">after</span> <span class="n">filtering</span><span class="o">.</span> <span class="n">Realize</span> <span class="n">edge</span> <span class="n">effects</span> <span class="n">are</span>
+                       <span class="n">unavoidable</span><span class="o">.</span> <span class="n">One</span> <span class="n">of</span> <span class="p">[</span><span class="s2">&quot;tide&quot;</span><span class="p">,</span> <span class="s2">&quot;minimum&quot;</span><span class="p">,</span> <span class="s2">&quot;maximum&quot;</span><span class="p">,</span>
+                       <span class="s2">&quot;mean&quot;</span><span class="p">,</span> <span class="s2">&quot;median&quot;</span><span class="p">,</span> <span class="s2">&quot;reflect&quot;</span><span class="p">,</span> <span class="s2">&quot;wrap&quot;</span><span class="p">]</span>
+
+   <span class="o">--</span><span class="n">xmldecimalplaces</span>  <span class="n">Not</span> <span class="n">used</span> <span class="ow">in</span> <span class="n">analysis</span><span class="o">.</span> <span class="n">Used</span> <span class="n">ONLY</span> <span class="n">to</span> <span class="n">complete</span> <span class="n">the</span> <span class="n">XML</span>
+                       <span class="n">file</span><span class="o">.</span> <span class="n">Format</span> <span class="n">of</span> <span class="n">the</span> <span class="n">observed</span> <span class="n">amplitude</span> <span class="ow">and</span> <span class="n">phase</span><span class="o">.</span>
+                       <span class="n">Default</span> <span class="n">depends</span> <span class="n">on</span> <span class="n">length</span> <span class="n">of</span> <span class="n">analysis</span> <span class="n">record</span><span class="o">.</span>
+
+   <span class="o">--</span><span class="n">xmlname</span>           <span class="n">Not</span> <span class="n">used</span> <span class="ow">in</span> <span class="n">analysis</span><span class="o">.</span> <span class="n">Used</span> <span class="n">ONLY</span> <span class="n">to</span> <span class="n">complete</span> <span class="n">the</span> <span class="n">XML</span>
+                       <span class="n">file</span><span class="o">.</span> <span class="n">Name</span> <span class="n">of</span> <span class="n">the</span> <span class="n">station</span> <span class="n">supplying</span> <span class="n">the</span> <span class="n">observations</span><span class="o">.</span>
+                       <span class="n">Defaults</span> <span class="n">to</span> <span class="s1">&#39;A port in a storm&#39;</span><span class="o">.</span>
+
+   <span class="o">--</span><span class="n">config</span>            <span class="n">Read</span> <span class="n">command</span> <span class="n">line</span> <span class="n">options</span> <span class="kn">from</span> <span class="nn">config</span> <span class="n">file</span><span class="p">,</span> <span class="n">override</span>
+                       <span class="n">config</span> <span class="n">file</span> <span class="n">entries</span> <span class="n">on</span> <span class="n">the</span> <span class="n">command</span> <span class="n">line</span><span class="o">.</span>
+
+   <span class="o">--</span><span class="n">def_filename</span>      <span class="n">Containes</span> <span class="n">the</span> <span class="n">definition</span> <span class="n">string</span> <span class="n">to</span> <span class="n">parse</span> <span class="n">the</span> <span class="nb">input</span>
+                       <span class="n">data</span><span class="o">.</span>
+
+   <span class="o">--</span><span class="n">xmlcountry</span>        <span class="n">Not</span> <span class="n">used</span> <span class="ow">in</span> <span class="n">analysis</span><span class="o">.</span> <span class="n">Used</span> <span class="n">ONLY</span> <span class="n">to</span> <span class="n">complete</span> <span class="n">the</span> <span class="n">XML</span>
+                       <span class="n">file</span><span class="o">.</span> <span class="n">Name</span> <span class="n">of</span> <span class="n">the</span> <span class="n">country</span> <span class="n">containing</span> <span class="n">the</span> <span class="n">station</span><span class="o">.</span>
+                       <span class="n">Defaults</span> <span class="n">to</span> <span class="s1">&#39;A man without a country&#39;</span><span class="o">.</span>
+
+   <span class="o">--</span><span class="n">xmltimezone</span>       <span class="n">Not</span> <span class="n">used</span> <span class="ow">in</span> <span class="n">analysis</span><span class="o">.</span> <span class="n">Used</span> <span class="n">ONLY</span> <span class="n">to</span> <span class="n">complete</span> <span class="n">the</span> <span class="n">XML</span>
+                       <span class="n">file</span><span class="o">.</span> <span class="n">Time</span> <span class="n">zone</span> <span class="n">of</span> <span class="n">the</span> <span class="n">station</span><span class="o">.</span> <span class="n">Defaults</span> <span class="n">to</span> <span class="s1">&#39;0000&#39;</span><span class="o">.</span>
+
+   <span class="o">--</span><span class="n">include_inferred</span>  <span class="n">Do</span> <span class="ow">not</span> <span class="n">incorporate</span> <span class="nb">any</span> <span class="n">inferred</span> <span class="n">constituents</span> <span class="n">into</span> <span class="n">the</span>
+                       <span class="n">least</span> <span class="n">squares</span> <span class="n">fit</span><span class="o">.</span>
+
+   <span class="o">--</span><span class="n">xmllatitude</span>       <span class="n">Not</span> <span class="n">used</span> <span class="ow">in</span> <span class="n">analysis</span><span class="o">.</span> <span class="n">Used</span> <span class="n">ONLY</span> <span class="n">to</span> <span class="n">complete</span> <span class="n">the</span> <span class="n">XML</span>
+                       <span class="n">file</span><span class="o">.</span> <span class="n">Latitude</span> <span class="n">of</span> <span class="n">the</span> <span class="n">station</span><span class="o">.</span> <span class="n">Defaults</span> <span class="n">to</span> <span class="mf">0.0</span><span class="o">.</span>
+
+   <span class="o">--</span><span class="n">linear_trend</span>      <span class="n">Include</span> <span class="n">a</span> <span class="n">linear</span> <span class="n">trend</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">least</span> <span class="n">squares</span> <span class="n">fit</span><span class="o">.</span>
+
+   <span class="o">--</span><span class="n">outputts</span>          <span class="n">Output</span> <span class="n">time</span> <span class="n">series</span> <span class="k">for</span> <span class="n">each</span> <span class="n">constituent</span><span class="o">.</span>
+
+   <span class="o">--</span><span class="n">xmlcomments</span>       <span class="n">Not</span> <span class="n">used</span> <span class="ow">in</span> <span class="n">analysis</span><span class="o">.</span> <span class="n">Used</span> <span class="n">ONLY</span> <span class="n">to</span> <span class="n">complete</span> <span class="n">the</span> <span class="n">XML</span>
+                       <span class="n">file</span><span class="o">.</span> <span class="n">Station</span> <span class="n">comments</span><span class="o">.</span> <span class="n">Defaults</span> <span class="n">to</span> <span class="s1">&#39;No comment&#39;</span><span class="o">.</span>
+
+   <span class="o">--</span><span class="n">quiet</span>             <span class="n">Print</span> <span class="n">nothing</span> <span class="n">to</span> <span class="n">the</span> <span class="n">screen</span><span class="o">.</span>
+
+   <span class="o">--</span><span class="n">print_vau_table</span>   <span class="n">For</span> <span class="n">debugging</span> <span class="o">-</span> <span class="n">will</span> <span class="nb">print</span> <span class="n">a</span> <span class="n">table</span> <span class="n">of</span> <span class="n">V</span> <span class="ow">and</span> <span class="n">u</span> <span class="n">values</span>
+                       <span class="n">to</span> <span class="n">compare</span> <span class="n">against</span> <span class="n">Schureman</span><span class="o">.</span>
+
+   <span class="o">--</span><span class="nb">filter</span>            <span class="n">Filter</span> <span class="nb">input</span> <span class="n">data</span> <span class="nb">set</span> <span class="k">with</span> <span class="n">tide</span> <span class="n">elimination</span> <span class="n">filters</span><span class="o">.</span>
+                       <span class="n">The</span> <span class="o">-</span><span class="n">o</span> <span class="n">outputts</span> <span class="n">option</span> <span class="ow">is</span> <span class="n">implied</span><span class="o">.</span> <span class="n">Any</span> <span class="n">mix</span> <span class="n">separated</span>
+                       <span class="n">by</span> <span class="n">commas</span> <span class="ow">and</span> <span class="n">no</span> <span class="n">spaces</span><span class="p">:</span>
+                       <span class="n">transform</span><span class="p">,</span><span class="n">usgs</span><span class="p">,</span><span class="n">doodson</span><span class="p">,</span><span class="n">boxcar</span>
+
+   <span class="o">--</span><span class="n">remove_extreme</span>    <span class="n">Remove</span> <span class="n">values</span> <span class="n">outside</span> <span class="n">of</span> <span class="mi">2</span> <span class="n">standard</span> <span class="n">deviations</span> <span class="n">before</span>
+                       <span class="n">analysis</span><span class="o">.</span>
+
+   <span class="o">--</span><span class="n">outputxml</span>         <span class="n">File</span> <span class="n">name</span> <span class="n">to</span> <span class="n">output</span> <span class="n">constituents</span> <span class="k">as</span> <span class="n">IHOTC</span> <span class="n">XML</span> <span class="nb">format</span><span class="o">.</span>
+
+   <span class="o">--</span><span class="n">debug</span>             <span class="n">Print</span> <span class="n">debug</span> <span class="n">messages</span><span class="o">.</span>
+
+
+<span class="p">(</span><span class="n">specifying</span> <span class="n">a</span> <span class="n">single</span> <span class="n">hyphen</span> <span class="p">(</span><span class="o">-</span><span class="p">)</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">argument</span> <span class="nb">list</span> <span class="n">means</span> <span class="nb">all</span>
+<span class="n">subsequent</span> <span class="n">arguments</span> <span class="n">are</span> <span class="n">treated</span> <span class="k">as</span> <span class="n">bare</span> <span class="n">arguments</span><span class="p">,</span> <span class="ow">not</span> <span class="n">options</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="prediction-arguments">
+<h2>Prediction Arguments<a class="headerlink" href="#prediction-arguments" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tappy</span><span class="o">.</span><span class="n">py</span> <span class="n">prediction</span> <span class="o">--</span><span class="n">help</span>
+
+
+<span class="n">Usage</span><span class="p">:</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">tappy</span><span class="o">.</span><span class="n">py</span> <span class="n">prediction</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">xml_filename</span><span class="o">&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">start_date</span><span class="o">&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">end_date</span><span class="o">&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">interval</span><span class="o">&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="p">[</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">include_inferred</span><span class="o">&amp;</span><span class="n">gt</span><span class="p">;]</span> <span class="p">[</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">fname</span><span class="o">&amp;</span><span class="n">gt</span><span class="p">;]</span>
+
+<span class="n">Prediction</span> <span class="n">based</span> <span class="n">upon</span> <span class="n">earlier</span> <span class="n">constituent</span> <span class="n">analysis</span> <span class="n">saved</span> <span class="ow">in</span> <span class="n">IHOTC</span> <span class="n">XML</span>
+<span class="n">transfer</span> <span class="nb">format</span><span class="o">.</span>
+
+<span class="n">Required</span> <span class="n">Arguments</span><span class="p">:</span>
+
+  <span class="n">xml_filename</span>     <span class="n">The</span> <span class="n">tidal</span> <span class="n">constituents</span> <span class="ow">in</span> <span class="n">IHOTC</span> <span class="n">XML</span> <span class="n">transfer</span> <span class="nb">format</span><span class="o">.</span>
+
+  <span class="n">start_date</span>       <span class="n">The</span> <span class="n">start</span> <span class="n">date</span> <span class="k">as</span> <span class="n">a</span> <span class="n">ISO</span> <span class="mi">8601</span> <span class="n">string</span><span class="o">.</span> <span class="s1">&#39;2010-01-01T00:00:00&#39;</span>
+
+  <span class="n">end_date</span>         <span class="n">The</span> <span class="n">end</span> <span class="n">date</span> <span class="k">as</span> <span class="n">a</span> <span class="n">ISO</span> <span class="mi">8601</span> <span class="n">string</span><span class="o">.</span> <span class="s1">&#39;2011-01-01T00:00:00:00&#39;</span>
+
+  <span class="n">interval</span>         <span class="n">The</span> <span class="n">interval</span> <span class="k">as</span> <span class="n">the</span> <span class="n">number</span> <span class="n">of</span> <span class="n">minutes</span><span class="o">.</span>
+
+<span class="n">Options</span><span class="p">:</span>
+
+   <span class="o">--</span><span class="n">fname</span>             <span class="n">Output</span> <span class="n">filename</span><span class="p">,</span> <span class="n">default</span> <span class="ow">is</span> <span class="s1">&#39;-&#39;</span> <span class="n">to</span> <span class="nb">print</span> <span class="n">to</span> <span class="n">screen</span><span class="o">.</span>
+
+   <span class="o">--</span><span class="n">include_inferred</span>  <span class="n">Include</span> <span class="n">the</span> <span class="n">inferred</span> <span class="n">constituents</span><span class="o">.</span>
+
+
+<span class="p">(</span><span class="n">specifying</span> <span class="n">a</span> <span class="n">single</span> <span class="n">hyphen</span> <span class="p">(</span><span class="o">-</span><span class="p">)</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">argument</span> <span class="nb">list</span> <span class="n">means</span> <span class="nb">all</span>
+<span class="n">subsequent</span> <span class="n">arguments</span> <span class="n">are</span> <span class="n">treated</span> <span class="k">as</span> <span class="n">bare</span> <span class="n">arguments</span><span class="p">,</span> <span class="ow">not</span> <span class="n">options</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Input Data</a></li>
+<li><a class="reference internal" href="#definition-file">Definition File</a><ul>
+<li><a class="reference internal" href="#example-definition-file">Example Definition File</a><ul>
+<li><a class="reference internal" href="#you-need-to-specify-the-separator-between">You need to specify the separator between</a></li>
+<li><a class="reference internal" href="#the-integer-part-and-the-decimal">the integer part and the decimal</a></li>
+<li><a class="reference internal" href="#part-of-real-numbers-even-if-you-only">part of real numbers, even if you only</a></li>
+<li><a class="reference internal" href="#have-integers-in-your-data-file">have integers in your data file.</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#filters">Filters</a></li>
+<li><a class="reference internal" href="#command-line-arguments">Command Line Arguments</a><ul>
+<li><a class="reference internal" href="#subcommands">Subcommands</a></li>
+<li><a class="reference internal" href="#analysis-arguments">Analysis Arguments</a></li>
+<li><a class="reference internal" href="#prediction-arguments">Prediction Arguments</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="TappyDoc.html"
+                        title="previous chapter">The Program</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="FillMissing.html"
+                        title="next chapter">&lt;no title&gt;</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/TappyUsersGuide.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="FillMissing.html" title="&lt;no title&gt;"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="TappyDoc.html" title="The Program"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">tappy 0.9.2 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Input Data</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2013, Tim Cera, P.E..
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.3.0.
+    </div>
+  </body>
+</html>
