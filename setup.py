@@ -16,6 +16,11 @@ pkg_name = "tappy"
 
 version = open("VERSION").readline().strip()
 
+scripts=['tappy.py']
+packages=[
+    'tappy_lib',
+    ]
+
 if sys.argv[-1] == "publish":
     subprocess.run(shlex.split("cleanpy ."))
     subprocess.run(shlex.split("python setup.py sdist"))
@@ -82,13 +87,11 @@ setup(
     author_email="tim@cerazone.net",
     url=f"http://timcera.bitbucket.io/{pkg_name}/docs/index.html",
     license="BSD",
-    packages=find_packages("src"),
-    package_dir={"": "src"},
-    include_package_data=True,
     zip_safe=False,
     install_requires=install_requires,
     extras_require=extras_require,
-    entry_points={"console_scripts": [f"{pkg_name}={pkg_name}.{pkg_name}:main"]},
     test_suite="tests",
     python_requires=">=3.7.1",
+    scripts=scripts,
+    packages=packages,
 )
