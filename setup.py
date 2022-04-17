@@ -35,7 +35,6 @@ install_requires = [
     # http://packages.python.org/distribute/setuptools.html#declaring-dependencies
     "astronomia",
     "pyparsing",
-    "filelike",
 ]
 
 extras_require = {
