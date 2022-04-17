@@ -1,0 +1,28 @@
+
+[tool.check-manifest]
+ignore = ["docs/_function_autosummary/*",
+          ".coverage",
+          ".deepsource.toml",
+          ".ipynb_checkpoints/*"]
+
+
+[tool.commitizen]
+name = "cz_conventional_commits"
+version = "0.9.2"
+tag_format = "$version"
+version_files = ["VERSION"]
+update_changelog_on_bump = true
+
+
+[build-system]
+requires = [
+    "setuptools",
+    "oldest-supported-numpy",
+]
+build-backend = "setuptools.build_meta"
+
+# This can't be specified in pyproject.toml because can't figure out how to add
+# toml support to coverage in github actions, but the equivalent setting can be
+# in setup.cfg.
+# [tool.coverage.run]
+# relative_files = true
