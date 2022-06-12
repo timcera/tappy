@@ -1,3 +1,6 @@
+Fill Missing
+------------
+
 TAPPy has two options for dealing with missing values, the default is to
 ignore them.
 
@@ -10,4 +13,4 @@ The fill option has some problems, but in general terms, the performance
 improves if the missing time span is short and the time-series itself is
 lengthy.
 
-[[img src=missing.png]]
+.. image:: Missing.png

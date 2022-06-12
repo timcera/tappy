@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 """
 NAME:
@@ -52,13 +53,13 @@ def msg(txt):
 def debug(ftn, txt):
     """Used for debugging."""
     if debug_p:
-        sys.stdout.write("%s.%s:%s\n" % (modname, ftn, txt))
+        sys.stdout.write(f"{modname}.{ftn}:{txt}\n")
         sys.stdout.flush()
 
 
 def fatal(ftn, txt):
     """If can't continue."""
-    msg = "%s.%s:FATAL:%s\n" % (modname, ftn, txt)
+    msg = f"{modname}.{ftn}:FATAL:{txt}\n"
     raise SystemExit(msg)
 
 

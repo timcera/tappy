@@ -16,10 +16,10 @@ pkg_name = "tappy"
 
 version = open("VERSION").readline().strip()
 
-scripts=['tappy.py']
-packages=[
-    'tappy_lib',
-    ]
+scripts = ["tappy.py"]
+packages = [
+    "tappy_lib",
+]
 
 if sys.argv[-1] == "publish":
     subprocess.run(shlex.split("cleanpy ."))

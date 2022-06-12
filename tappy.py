@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 """
 NAME:
@@ -39,22 +40,23 @@ EXAMPLES:
 
 
 """
-# ===imports======================
-import sys
-import os
-import os.path
-import numpy as np
-from scipy.optimize import leastsq
 import datetime
 import operator
+import os
+import os.path
 
-import six
-from numpy import pad
-import baker
+# ===imports======================
+import sys
 
 import astronomia.calendar as cal
-from tappy_lib.parameter_database import _master_speed_dict, letter_to_factor_map
+import baker
+import numpy as np
+import six
+from numpy import pad
+from scipy.optimize import leastsq
+
 from tappy_lib import sparser
+from tappy_lib.parameter_database import _master_speed_dict, letter_to_factor_map
 
 # ===globals======================
 modname = "tappy"
@@ -77,12 +79,12 @@ def msg(txt):
 
 def debug(ftn, txt):
     if debug_p:
-        sys.stdout.write("%s.%s:%s\n" % (modname, ftn, txt))
+        sys.stdout.write(f"{modname}.{ftn}:{txt}\n")
         sys.stdout.flush()
 
 
 def fatal(ftn, txt):
-    msg = "%s.%s:FATAL:%s\n" % (modname, ftn, txt)
+    msg = f"{modname}.{ftn}:FATAL:{txt}\n"
     raise SystemExit(msg)
 
 
@@ -197,7 +199,7 @@ class Util:
 
     def sum_signals(self, skey_list, hours, speed_dict, amp=None, phase=None):
         fpss = open("/tmp/ss.log", "w")
-        fpss.write("{0}".format(hours.shape))
+        fpss.write(f"{hours.shape}")
         total = np.zeros(len(hours), dtype="f")
         if isinstance(hours[0], datetime.datetime):
             hours = self.dates2jd(hours)
@@ -219,10 +221,10 @@ class Util:
                     - (p - speed_dict[i]["VAU"]) * deg2rad
                 )
             )
-            fpss.write("{0}".format(speed_dict[i]["FF"].shape))
-            fpss.write("{0}".format(component.shape))
+            fpss.write(f"{speed_dict[i]['FF'].shape}")
+            fpss.write(f"{component.shape}")
             total = total + component
-            fpss.write("{0}".format(total.shape))
+            fpss.write(f"{total.shape}")
         return total
 
     def dates2jd(self, dates):
@@ -244,9 +246,9 @@ class Util:
 
     def write_file(self, x, y, fname="-"):
         fp = open("/tmp/tap.log", "w")
-        fp.write("{0}".format(x))
-        fp.write("{0}".format(y))
-        fp.write("{0}".format(y.shape))
+        fp.write(f"{x}")
+        fp.write(f"{y}")
+        fp.write(f"{y.shape}")
         fp.write(fname)
         if isinstance(y, dict):
             for key in list(y.keys()):
@@ -537,7 +539,7 @@ class Util:
             "FF": (
                 self.tidal_dict["O1"]["FF"]
                 * (2.31 + 1.435 * np.cos(2.0 * kap_p)) ** 0.5
-                / 2.307 ** 0.5
+                / 2.307**0.5
             ),
         }
         self.tidal_dict["MN4"] = {
@@ -980,8 +982,7 @@ class tappy(Util):
         for line in fp:
             if "water_level" not in list(line.parsed_dict.keys()):
                 print(
-                    "Warning: record %i did not parse according to the supplied definition file"
-                    % line.line_number
+                    f"Warning: record {line.line_number} did not parse according to the supplied definition file"
                 )
                 continue
             if "datetime" in list(line.parsed_dict.keys()):
@@ -1006,8 +1007,7 @@ class tappy(Util):
                 )
             else:
                 print(
-                    "Warning: record %i did not parse the date and time according to the supplied definition file"
-                    % line.line_number
+                    f"Warning: record {line.line_number} did not parse the date and time according to the supplied definition file"
                 )
                 print(
                     'Requires "year", "month", "day", and "hour" ("minute" and "second" are optional and default to zero) OR a Julian date/time'
@@ -1259,7 +1259,7 @@ class tappy(Util):
                         self.inferred_phase[key] + self.tidal_dict[key]["VAU"], 360
                     )
 
-        sumterm = np.zeros((len(t)))
+        sumterm = np.zeros(len(t))
         for i in list(key_list) + self.inferred_key_list:
             sumterm = sumterm + H[i] * np.squeeze(ff[i]["FF"]) * np.cos(
                 self.tidal_dict[i]["speed"] * t - phase[i]
@@ -1691,8 +1691,8 @@ class tappy(Util):
             return dates_filled[nslice], relevation[nslice]
 
         if nstype == "wavelet":
-            import pywt
             import pylab
+            import pywt
 
             for wl in pywt.wavelist():
 
@@ -1712,7 +1712,7 @@ class tappy(Util):
                     )
 
                 y = pywt.waverec(a, w, mode="sym")
-                self.write_file(dates, y, fname="%s.dat" % wl)
+                self.write_file(dates, y, fname=f"{wl}.dat")
 
             relevation = y
             return dates_filled[nslice], relevation[nslice]
@@ -1970,7 +1970,7 @@ class tappy(Util):
 
 
 @baker.command()
-def writeconfig(iniconffile=sys.argv[0] + ".ini"):
+def writeconfig(iniconffile=f"{sys.argv[0]}.ini"):
     """OVERWRITES an ini style config file that holds all of default the command line options.
 
     :param iniconffile: the file name of the ini file, defaults to 'script.ini'.
@@ -2248,9 +2248,7 @@ def analysis(
                 "transform",
             ]:  # 'lecolazet', 'godin', 'sfa']:
                 filtered_dates, result = x.filters(item, x.dates, x.elevation)
-                x.write_file(
-                    filtered_dates, result, fname="outts_filtered_%s.dat" % (item,)
-                )
+                x.write_file(filtered_dates, result, fname=f"outts_filtered_{item}.dat")
         (x.speed_dict, x.key_list) = x.which_constituents(
             len(x.dates), package, rayleigh_comp=ray
         )
@@ -2263,11 +2261,9 @@ def analysis(
             x.write_file(
                 x.dates,
                 x.sum_signals([key], x.dates, x.speed_dict),
-                fname="outts_%s.dat" % (key,),
+                fname=f"outts_{key}.dat",
             )
-            x.write_file(
-                x.dates, x.speed_dict[key]["FF"], fname="outts_ff_%s.dat" % (key,)
-            )
+            x.write_file(x.dates, x.speed_dict[key]["FF"], fname=f"outts_ff_{key}.dat")
         x.write_file(
             x.dates,
             x.sum_signals(x.key_list, x.dates, x.tidal_dict),
@@ -2279,10 +2275,10 @@ def analysis(
         import xml.etree.ElementTree as et
 
         def indent(elem, level=0):
-            i = "\n" + level * "  "
+            i = f"\n{level * '  '}"
             if len(elem):
                 if not elem.text or not elem.text.strip():
-                    elem.text = i + "  "
+                    elem.text = f"{i}  "
                 if not elem.tail or not elem.tail.strip():
                     elem.tail = i
                 for elem in elem:
@@ -2348,7 +2344,7 @@ def analysis(
             ampformatstr = "{0}"
             phaformatstr = ampformatstr
         else:
-            ampformatstr = "{0:." + xmldecimalplaces + "f}"
+            ampformatstr = f"{{0:.{xmldecimalplaces}f}}"
             phaformatstr = ampformatstr
 
         for key in klist:

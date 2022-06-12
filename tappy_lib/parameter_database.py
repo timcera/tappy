@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 letter_to_factor_map = {
     "Z": 0,
     "Y": -1,
@@ -29,7 +30,7 @@ import math as m
 def _m1b(p, N):
     A = 2.783 * m.sin(2 * p) + 0.558 * m.sin(2 * p - N) + 0.184 * m.sin(N)
     B = 1 + A
-    f = (A ** 2 + B ** 2) ** 0.5
+    f = (A**2 + B**2) ** 0.5
     u = m.asin(A / f)
     return (u, f)
 

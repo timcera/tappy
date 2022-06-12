@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 """
 NAME:
@@ -43,14 +44,14 @@ EXAMPLES:
 #    675 Mass Ave, Cambridge, MA 02139, USA.
 """
 
+import datetime
+import getopt
+import os
+
 # ===imports======================
 import sys
-import os
-import getopt
-import datetime
 
 from pyparsing import *
-
 
 # ===globals======================
 modname = "sparser"
@@ -175,7 +176,7 @@ def real(
     if required_decimal:
         lword = Combine(
             sign
-            + Regex("[0-9]*\.[0-9]*")
+            + Regex(r"[0-9]*\.[0-9]*")
             + Optional(oneOf("E e D d") + Optional(oneOf("- +")) + Word(nums))
         )
     else:
@@ -228,19 +229,7 @@ def integer_as_string(
 
 def isoformat_as_datetime(name, parseAct=isotoDate):
     """Appends a skip/real pair to the parse constructs."""
-    lword = (
-        Word(nums)
-        + "-"
-        + Word(nums)
-        + "-"
-        + Word(nums)
-        + oneOf("T  ")
-        + Word(nums)
-        + ":"
-        + Word(nums)
-        + ":"
-        + Word(nums)
-    )
+    lword = f"{Word(nums)}-{Word(nums)}-{Word(nums)}{oneOf('T  ')}{Word(nums)}:{Word(nums)}:{Word(nums)}"
     grammar.append(SkipTo(lword))
     grammar.append(lword.setResultsName(name).setParseAction(parseAct))
 
@@ -427,9 +416,9 @@ class ParseFileLineByLine:
 
         self.line_number = 0
 
-        definition_file_one = filen + ".def"
+        definition_file_one = f"{filen}.def"
         if os.path.dirname(filen):
-            definition_file_two = os.path.dirname(filen) + os.sep + "sparse.def"
+            definition_file_two = f"{os.path.dirname(filen) + os.sep}sparse.def"
         else:
             definition_file_two = "sparse.def"
 
@@ -526,11 +515,11 @@ if __name__ == "__main__":
     )
     for opt in opts:
         if opt[0] == "-h" or opt[0] == "--help":
-            print(modname + ": version=" + __version__)
+            print(f"{modname}: version={__version__}")
             usage()
             sys.exit(0)
         elif opt[0] == "-v" or opt[0] == "--version":
-            print(modname + ": version=" + __version__)
+            print(f"{modname}: version={__version__}")
             sys.exit(0)
         elif opt[0] == "-d" or opt[0] == "--debug":
             debug_p = 1

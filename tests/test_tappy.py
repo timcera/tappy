@@ -1,14 +1,14 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
-from __future__ import print_function
 
-import sys
-import unittest
-import glob
-import subprocess
 import difflib
+import glob
 import os
 import os.path
+import subprocess
+import sys
+import unittest
 
 # directory dance to find tappy.py module in directory above
 # test_tappy.py
@@ -54,9 +54,9 @@ class TappyTest(unittest.TestCase):
     def test_constituents(self):
         for i in ["M2", "M8"]:
             alines = open(
-                os.path.join(os.path.pardir, "output_ts", "outts_%s.dat" % i)
+                os.path.join(os.path.pardir, "output_ts", f"outts_{i}.dat")
             ).readlines()
-            blines = open(os.path.join("outts_%s.dat" % i)).readlines()
+            blines = open(os.path.join(f"outts_{i}.dat")).readlines()
             d = difflib.Differ()
             result = list(d.compare(alines, blines))
             result = [i for i in result if i[0] in ["+", "-", "?"]]

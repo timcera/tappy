@@ -17,7 +17,6 @@ Table of Contents
    :maxdepth: 2
 
    readme
-   TappyDoc
    TappyUsersGuide
    FillMissing
    CompareTidalFilters

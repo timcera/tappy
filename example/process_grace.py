@@ -1,7 +1,9 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
-import string
 import datetime
+import string
+
 import scipy as N
 
 filename = "mayport_florida_8720220_data.txt"
@@ -22,10 +24,10 @@ elevation = N.array(elevation)
 
 fpo = open("mayport_xmgrace.dat", "w")
 for index, d in enumerate(dates):
-    fpo.write("%s %f\n" % (d.isoformat(), elevation[index]))
+    fpo.write(f"{d.isoformat()} {elevation[index]:f}\n")
 
 con = N.convolve(elevation, [1.0 / 25.0] * 25, mode=1)
 
 fpo = open("mayport_xmgrace_data_convolved.dat", "w")
 for index, d in enumerate(dates):
-    fpo.write("%s %f\n" % (d.isoformat(), elevation[index] - con[index]))
+    fpo.write(f"{d.isoformat()} {elevation[index] - con[index]:f}\n")
