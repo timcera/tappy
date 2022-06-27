@@ -514,14 +514,14 @@ if __name__ == "__main__":
         sys.argv[1:], "hvd", ["help", "version", "debug", "bb="]
     )
     for opt in opts:
-        if opt[0] == "-h" or opt[0] == "--help":
+        if opt[0] in ["-h", "--help"]:
             print(f"{modname}: version={__version__}")
             usage()
             sys.exit(0)
-        elif opt[0] == "-v" or opt[0] == "--version":
+        elif opt[0] in ["-v", "--version"]:
             print(f"{modname}: version={__version__}")
             sys.exit(0)
-        elif opt[0] == "-d" or opt[0] == "--debug":
+        elif opt[0] in ["-d", "--debug"]:
             debug_p = 1
         elif opt[0] == "--bb":
             opt_b = opt[1]

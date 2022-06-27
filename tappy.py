@@ -98,11 +98,7 @@ def interpolate(data, start, stop, iavg):
     zone_calculations.
     """
 
-    if start < iavg:
-        ssl = slice(0, start)
-    else:
-        ssl = slice(start - iavg, start)
-
+    ssl = slice(0, start) if start < iavg else slice(start - iavg, start)
     if stop > (len(data) - iavg):
         stop_sl = slice(stop + 1, len(data))
     else:
@@ -205,11 +201,8 @@ class Util:
             hours = self.dates2jd(hours)
             hours = (hours - hours[0]) * 24
         for i in skey_list:
-            if amp == None:
-                R = self.r[i]
-            else:
-                R = (amp - np.average(amp)) + self.r[i]
-            if phase == None:
+            R = self.r[i] if amp is None else (amp - np.average(amp)) + self.r[i]
+            if phase is None:
                 p = self.phase[i]
             else:
                 p = (phase - np.average(phase)) + self.phase[i]
@@ -254,14 +247,13 @@ class Util:
             for key in list(y.keys()):
                 nfname = f"{os.path.splitext(fname)[-2]}_{key}.dat"
                 self.write_file(x, y[key], fname=nfname)
+        elif fname == "-":
+            for d, v in zip(x, y):
+                print(f"{d.isoformat()} {v}")
         else:
-            if fname == "-":
-                for d, v in zip(x, y):
-                    print(f"{d.isoformat()} {v}")
-            else:
-                fpo = open(fname, "w")
-                for d, v in zip(x, y):
-                    fpo.write(f"{d.isoformat()} {v}")
+            fpo = open(fname, "w")
+            for d, v in zip(x, y):
+                fpo.write(f"{d.isoformat()} {v}")
 
     def astronomic(self, dates):
         """
