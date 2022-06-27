@@ -54,9 +54,10 @@ class TappyTest(unittest.TestCase):
     def test_constituents(self):
         for i in ["M2", "M8"]:
             alines = open(
-                os.path.join(os.path.pardir, "output_ts", "outts_%s.dat" % i)
+                os.path.join(os.path.pardir, "output_ts", f"outts_{i}.dat")
             ).readlines()
-            blines = open(os.path.join("outts_%s.dat" % i)).readlines()
+
+            blines = open(os.path.join(f"outts_{i}.dat")).readlines()
             d = difflib.Differ()
             result = list(d.compare(alines, blines))
             result = [i for i in result if i[0] in ["+", "-", "?"]]
