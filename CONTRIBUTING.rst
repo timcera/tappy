@@ -12,7 +12,7 @@ Types of Contributions
 
 Report Bugs
 ~~~~~~~~~~~
-Report bugs at https://bitbucket.org/timcera/tstoolbox/issues?status=new&status=open
+Report bugs at https://bitbucket.org/timcera/tappy/issues?status=new&status=open
 
 If you are reporting a bug, please include:
 
@@ -32,13 +32,13 @@ is open to whoever wants to implement it.
 
 Write Documentation
 ~~~~~~~~~~~~~~~~~~~
-TSToolbox could always use more documentation, whether as part of the
-official TSToolbox docs, in docstrings, or even on the web in blog posts,
+tappy could always use more documentation, whether as part of the
+official tappy docs, in docstrings, or even on the web in blog posts,
 articles, and such.
 
 Submit Feedback
 ~~~~~~~~~~~~~~~
-The best way to send feedback is to file an issue at https://bitbucket.org/timcera/tstoolbox
+The best way to send feedback is to file an issue at https://bitbucket.org/timcera/tappy
 
 If you are proposing a feature:
 
@@ -49,21 +49,21 @@ If you are proposing a feature:
 
 Get Started!
 ------------
-Ready to contribute? Here's how to set up `tstoolbox` for local development.
+Ready to contribute? Here's how to set up `tappy` for local development.
 
-1. Fork the `tstoolbox` repo on bitbucket at
-   https://bitbucket.org/timcera/tstoolbox/fork.
+1. Fork the `tappy` repo on bitbucket at
+   https://bitbucket.org/timcera/tappy/fork.
 
 2. Clone your fork locally::
 
-    $ git clone git@bitbucket.org:your_bitbucket_login/tstoolbox.git
+    $ git clone git@bitbucket.org:your_bitbucket_login/tappy.git
 
 3. Install your local copy into a virtualenv. Assuming you have
    virtualenvwrapper installed, this is how you set up your fork for local
    development::
 
-    $ mkvirtualenv tstoolbox
-    $ cd tstoolbox
+    $ mkvirtualenv tappy
+    $ cd tappy
     $ python setup.py develop
 
 4. For testing you also need to install tox, coverage, and flake8::

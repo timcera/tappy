@@ -1,5 +1,6 @@
-import sys
+# -*- coding: utf-8 -*-
 import os
+import sys
 
 ced = os.path.abspath(os.sep.join(__path__))
 sys.path.insert(0, ced)

@@ -49,14 +49,14 @@ import os.path
 import sys
 
 import astronomia.calendar as cal
-import baker
+import mando
 import numpy as np
 import six
 from numpy import pad
 from scipy.optimize import leastsq
 
-from tappy_lib import sparser
-from tappy_lib.parameter_database import _master_speed_dict, letter_to_factor_map
+from tappy.tappy_lib import sparser
+from tappy.tappy_lib.parameter_database import _master_speed_dict, letter_to_factor_map
 
 # ===globals======================
 modname = "tappy"
@@ -248,12 +248,14 @@ class Util:
                 nfname = f"{os.path.splitext(fname)[-2]}_{key}.dat"
                 self.write_file(x, y[key], fname=nfname)
         elif fname == "-":
+            print("Datetime,water_level")
             for d, v in zip(x, y):
-                print(f"{d.isoformat()} {v}")
+                print(f"{d.isoformat()},{v}")
         else:
             fpo = open(fname, "w")
+            fpo.write("Datetime,water_level\n")
             for d, v in zip(x, y):
-                fpo.write(f"{d.isoformat()} {v}")
+                fpo.write(f"{d.isoformat()},{v}\n")
 
     def astronomic(self, dates):
         """
@@ -1961,17 +1963,17 @@ class tappy(Util):
         pass
 
 
-@baker.command()
+@mando.command()
 def writeconfig(iniconffile=f"{sys.argv[0]}.ini"):
     """OVERWRITES an ini style config file that holds all of default the command line options.
 
     :param iniconffile: the file name of the ini file, defaults to 'script.ini'.
     """
 
-    baker.writeconfig(iniconffile=iniconffile)
+    mando.writeconfig(iniconffile=iniconffile)
 
 
-@baker.command()
+@mando.command()
 def prediction(
     xml_filename, start_date, end_date, interval, include_inferred=True, fname="-"
 ):
@@ -2039,7 +2041,7 @@ def prediction(
 
 
 # =============================
-@baker.command(default=True)
+@mando.command()
 def analysis(
     data_filename,
     def_filename=None,
@@ -2126,7 +2128,7 @@ def analysis(
     """
 
     if config:
-        baker.readconfig(config)
+        mando.readconfig(config)
 
     x = tappy(
         outputts=outputts,
@@ -2378,4 +2380,12 @@ def analysis(
         tree.write(x.outputxml)
 
 
-baker.run()
+def main():
+    """Set debug and run mando.main function."""
+    if not os.path.exists("debug_tappy"):
+        sys.tracebacklimit = 0
+    mando.main()
+
+
+if __name__ == "__main__":
+    main()
