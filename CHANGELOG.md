@@ -1,3 +1,10 @@
+## 0.9.5 (2022-07-04)
+
+### Refactor
+
+- complete refactor to style i use in the toolboxes plus several fixes
+- removed __future__
+
 ## 0.9.4 (2022-04-16)
 
 ### Fix
