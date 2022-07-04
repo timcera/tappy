@@ -1,60 +1,60 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-
 import difflib
 import glob
 import os
 import os.path
+import re
+import shlex
+import shutil
+import string
 import subprocess
-import sys
+import tempfile
 import unittest
 
 # directory dance to find tappy.py module in directory above
 # test_tappy.py
 file_loc = os.path.abspath(__file__)
 cur_path = os.path.dirname(file_loc)
-tappy_loc = os.path.dirname(cur_path)
 
-sys.path.insert(0, tappy_loc)
+_cwd = os.getcwd()
 
 
 class TappyTest(unittest.TestCase):
     def setUp(self):
-        os.chdir(os.path.join(cur_path, "tmp"))
+        self.tmpdir = tempfile.mkdtemp()
+        os.chdir(self.tmpdir)
         for files in ["*.dat", "*.xml"]:
             for f in glob.glob(files):
                 os.remove(f)
         self.con_output1 = subprocess.Popen(
             [
-                os.path.join(os.path.pardir, os.path.pardir, "tappy.py"),
+                "tappy",
                 "analysis",
                 os.path.join(
-                    os.path.pardir,
-                    os.path.pardir,
+                    _cwd,
                     "example",
                     "mayport_florida_8720220_data.txt",
                 ),
-                os.path.join(
-                    os.path.pardir,
-                    os.path.pardir,
-                    "example",
-                    "mayport_florida_8720220_data_def.txt",
-                ),
                 #        '--zero_ts="transform"',
-                "--outputts=True",
+                "--outputts",
                 '--outputxml="testout.xml"',
                 #        '--filter="transform"',
-                "--include_inferred=False",
+                "--include_inferred",
             ],
             stdout=subprocess.PIPE,
         )
         sts = os.waitpid(self.con_output1.pid, 0)[1]
 
+    def tearDown(self):
+        shutil.rmtree(self.tmpdir)
+
     def test_constituents(self):
+        os.chdir(self.tmpdir)
         for i in ["M2", "M8"]:
             alines = open(
-                os.path.join(os.path.pardir, "output_ts", f"outts_{i}.dat")
+                os.path.join(_cwd, "tests", "output_ts", f"outts_{i}.dat")
             ).readlines()
             blines = open(os.path.join(f"outts_{i}.dat")).readlines()
             d = difflib.Differ()
@@ -66,35 +66,38 @@ class TappyTest(unittest.TestCase):
             self.assertEqual(result, [])
 
     def test_closure(self):
+        os.chdir(self.tmpdir)
+        inputf = os.path.join(_cwd, "example", "mayport_florida_8720220_data.txt")
+        self.con_output1 = subprocess.call(
+            shlex.split(
+                f"tappy analysis {inputf} --outputxml testout.xml --include_inferred"
+            )
+        )
         self.con_output2 = subprocess.call(
-            [
-                os.path.join(os.path.pardir, os.path.pardir, "tappy.py"),
-                "prediction",
-                "testout.xml",
-                "2000-01-01T00:00:00",
-                "2000-02-01T00:00:00",
-                "60",
-                '--fname="predict.out"',
-            ]
+            shlex.split(
+                f"tappy prediction testout.xml 2000-01-01T00:00:00 2000-02-01T00:00:00 60 --fname predict.out"
+            )
         )
-        self.con_output3 = subprocess.Popen(
-            [
-                os.path.join(os.path.pardir, os.path.pardir, "tappy.py"),
-                "analysis",
-                "predict.out",
-                os.path.join(os.path.pardir, "predict_def.out"),
-                #        '--zero_ts="transform"',
-                '--outputxml="testoutclosure.xml"',
-                #        '--filter="transform"',
-                "--include_inferred=False",
-            ],
-            stdout=subprocess.PIPE,
+        def_filename = os.path.join(_cwd, "tests", "predict_def.out")
+        self.con_output3 = subprocess.call(
+            shlex.split(
+                f"tappy analysis predict.out --def_filename {def_filename} --outputxml testoutclosure.xml --include_inferred"
+            )
         )
-        sts = os.waitpid(self.con_output3.pid, 0)[1]
-        alines = open(os.path.join("testout.xml")).readlines()
-        blines = open(os.path.join("testoutclosure.xml")).readlines()
+        alines = open("testout.xml").readlines()
+        blines = open("testoutclosure.xml").readlines()
+        nalines = []
+        for a in alines:
+            match = re.search(r"[0-9\.]+", a)
+            if match is not None:
+                nalines.append(str(round(float(match.group()), 2)))
+        nblines = []
+        for b in blines:
+            match = re.search(r"[0-9\.]+", b)
+            if match is not None:
+                nblines.append(str(round(float(match.group()), 2)))
         d = difflib.Differ()
-        result = list(d.compare(alines, blines))
+        result = list(d.compare(nalines, nblines))
         result = [i for i in result if i[0] in ["+", "-", "?"]]
         print(
             "".join(result),

@@ -229,7 +229,19 @@ def integer_as_string(
 
 def isoformat_as_datetime(name, parseAct=isotoDate):
     """Appends a skip/real pair to the parse constructs."""
-    lword = f"{Word(nums)}-{Word(nums)}-{Word(nums)}{oneOf('T  ')}{Word(nums)}:{Word(nums)}:{Word(nums)}"
+    lword = (
+        Word(nums)
+        + "-"
+        + Word(nums)
+        + "-"
+        + Word(nums)
+        + oneOf("T  ")
+        + Word(nums)
+        + ":"
+        + Word(nums)
+        + ":"
+        + Word(nums)
+    )
     grammar.append(SkipTo(lword))
     grammar.append(lword.setResultsName(name).setParseAction(parseAct))
 
