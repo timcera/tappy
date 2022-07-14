@@ -60,7 +60,6 @@ from tappy.tappy_lib.parameter_database import _master_speed_dict, letter_to_fac
 
 # ===globals======================
 modname = "tappy"
-__version__ = "0.9.0"
 
 # --option args--
 debug_p = 0
