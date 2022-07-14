@@ -1,3 +1,9 @@
+## 0.9.6 (2022-07-13)
+
+### Fix
+
+- needed an __init__.py to identify the package
+
 ## 0.9.5 (2022-07-04)
 
 ### Refactor
