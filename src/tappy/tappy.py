@@ -49,11 +49,11 @@ import os.path
 import sys
 
 import astronomia.calendar as cal
-import mando
+import cltoolbox
 import numpy as np
-import six
 from numpy import pad
 from scipy.optimize import leastsq
+from tstoolbox import tstoolbox
 
 from tappy.tappy_lib import sparser
 from tappy.tappy_lib.parameter_database import _master_speed_dict, letter_to_factor_map
@@ -971,47 +971,54 @@ class tappy(Util):
 
     def open(self, filename, def_filename=None):
         # Read and parse data filename
-        fp = sparser.ParseFileLineByLine(filename, def_filename=def_filename, mode="r")
-        for line in fp:
-            if "water_level" not in list(line.parsed_dict.keys()):
-                print(
-                    f"Warning: record {line.line_number} did not parse according to the supplied definition file"
-                )
-                continue
-            if "datetime" in list(line.parsed_dict.keys()):
-                self.dates.append(line.parsed_dict["datetime"])
-            elif (
-                "year" in list(line.parsed_dict.keys())
-                and "month" in list(line.parsed_dict.keys())
-                and "day" in list(line.parsed_dict.keys())
-                and "hour" in list(line.parsed_dict.keys())
-            ):
-                line.parsed_dict.setdefault("minute", 0)
-                line.parsed_dict.setdefault("second", 0)
-                self.dates.append(
-                    datetime.datetime(
-                        line.parsed_dict["year"],
-                        line.parsed_dict["month"],
-                        line.parsed_dict["day"],
-                        line.parsed_dict["hour"],
-                        line.parsed_dict["minute"],
-                        line.parsed_dict["second"],
+        if def_filename is None:
+            df = tstoolbox.read(filename)
+            self.elevation = df[0].values
+            self.dates = df.index.values
+        else:
+            fp = sparser.ParseFileLineByLine(
+                filename, def_filename=def_filename, mode="r"
+            )
+            for line in fp:
+                if "water_level" not in list(line.parsed_dict.keys()):
+                    print(
+                        f"Warning: record {line.line_number} did not parse according to the supplied definition file"
                     )
-                )
-            else:
-                print(
-                    f"Warning: record {line.line_number} did not parse the date and time according to the supplied definition file"
-                )
-                print(
-                    'Requires "year", "month", "day", and "hour" ("minute" and "second" are optional and default to zero) OR a Julian date/time'
-                )
-                continue
-            self.elevation.append(line.parsed_dict["water_level"])
-        if len(self.elevation) == 0:
-            print("No data was found in the input file.")
-            sys.exit()
-        self.elevation = np.array(self.elevation)
-        self.dates = np.array(self.dates)
+                    continue
+                if "datetime" in list(line.parsed_dict.keys()):
+                    self.dates.append(line.parsed_dict["datetime"])
+                elif (
+                    "year" in list(line.parsed_dict.keys())
+                    and "month" in list(line.parsed_dict.keys())
+                    and "day" in list(line.parsed_dict.keys())
+                    and "hour" in list(line.parsed_dict.keys())
+                ):
+                    line.parsed_dict.setdefault("minute", 0)
+                    line.parsed_dict.setdefault("second", 0)
+                    self.dates.append(
+                        datetime.datetime(
+                            line.parsed_dict["year"],
+                            line.parsed_dict["month"],
+                            line.parsed_dict["day"],
+                            line.parsed_dict["hour"],
+                            line.parsed_dict["minute"],
+                            line.parsed_dict["second"],
+                        )
+                    )
+                else:
+                    print(
+                        f"Warning: record {line.line_number} did not parse the date and time according to the supplied definition file"
+                    )
+                    print(
+                        'Requires "year", "month", "day", and "hour" ("minute" and "second" are optional and default to zero) OR a Julian date/time'
+                    )
+                    continue
+                self.elevation.append(line.parsed_dict["water_level"])
+            if len(self.elevation) == 0:
+                print("No data was found in the input file.")
+                sys.exit()
+            self.elevation = np.array(self.elevation)
+            self.dates = np.array(self.dates)
 
     def missing(self, task, dates, elev):
         """
@@ -1436,7 +1443,7 @@ class tappy(Util):
         if nstype == "kalman":
             # I threw this in from an example on scipy's web site.  I will keep
             # it here, but I can't see an immediate use for in in tidal
-            # analysis.  It dappens out all frequencies.
+            # analysis.  It happens out all frequencies.
 
             # Might be able to use it it fill missing values.
 
@@ -1745,7 +1752,7 @@ class tappy(Util):
 
     def sortbyvalue(self, mydict):
         """Return a list of (key, value) pairs, sorted by value."""
-        return sorted(six.iteritems(mydict), key=operator.itemgetter(1))
+        return sorted(mydict.items(), key=operator.itemgetter(1))
 
     def print_con(self):
         ndict = {}
@@ -1962,18 +1969,21 @@ class tappy(Util):
         pass
 
 
-@mando.command()
-def writeconfig(iniconffile=f"{sys.argv[0]}.ini"):
+@cltoolbox.command("writeconfig")
+def writeconfig_cli(iniconffile=f"{sys.argv[0]}.ini"):
     """OVERWRITES an ini style config file that holds all of default the command line options.
 
     :param iniconffile: the file name of the ini file, defaults to 'script.ini'.
     """
+    writeconfig(iniconffile)
 
-    mando.writeconfig(iniconffile=iniconffile)
+
+def writeconfig(iniconffile=f"{sys.argv[0]}.ini"):
+    cltoolbox.writeconfig(iniconffile=iniconffile)
 
 
-@mando.command()
-def prediction(
+@cltoolbox.command()
+def prediction_cli(
     xml_filename, start_date, end_date, interval, include_inferred=True, fname="-"
 ):
     """Prediction based upon earlier constituent analysis saved in IHOTC XML transfer format.
@@ -1985,6 +1995,19 @@ def prediction(
     :param include_inferred: Include the inferred constituents.
     :param fname: Output filename, default is '-' to print to screen.
     """
+    prediction(
+        xml_filename,
+        start_date,
+        end_date,
+        interval,
+        include_inferred=include_inferred,
+        fname=fname,
+    )
+
+
+def prediction(
+    xml_filename, start_date, end_date, interval, include_inferred=True, fname="-"
+):
     import xml.etree.ElementTree as et
 
     tree = et.parse(xml_filename)
@@ -2040,8 +2063,8 @@ def prediction(
 
 
 # =============================
-@mando.command()
-def analysis(
+@cltoolbox.command("analysis")
+def analysis_cli(
     data_filename,
     def_filename=None,
     config=None,
@@ -2069,6 +2092,7 @@ def analysis(
     xmldecimalplaces="full",
 ):
     """Traditional analysis with separately calculated nodal factors.
+
      Constituent amplitude units are the same as the input heights.
      Constituent phases are based in the same time zone as the dates.
 
@@ -2125,9 +2149,66 @@ def analysis(
         standard which severly limits the number of decimal places, and if
         an integer number lists the number of decimal places.
     """
+    print(
+        analysis(
+            data_filename,
+            def_filename=def_filename,
+            config=config,
+            quiet=quiet,
+            debug=debug,
+            outputts=outputts,
+            outputxml=outputxml,
+            ephemeris=ephemeris,
+            rayleigh=rayleigh,
+            print_vau_table=print_vau_table,
+            missing_data=missing_data,
+            linear_trend=linear_trend,
+            remove_extreme=remove_extreme,
+            zero_ts=zero_ts,
+            filter=filter,
+            pad_filters=pad_filters,
+            include_inferred=include_inferred,
+            xmlname=xmlname,
+            xmlcountry=xmlcountry,
+            xmllatitude=xmllatitude,
+            xmllongitude=xmllongitude,
+            xmltimezone=xmltimezone,
+            xmlcomments=xmlcomments,
+            xmlunits=xmlunits,
+            xmldecimalplaces=xmldecimalplaces,
+        )
+    )
 
+
+def analysis(
+    data_filename,
+    def_filename=None,
+    config=None,
+    quiet=False,
+    debug=False,
+    outputts=False,
+    outputxml="",
+    ephemeris=False,
+    rayleigh=1.0,
+    print_vau_table=False,
+    missing_data="ignore",
+    linear_trend=False,
+    remove_extreme=False,
+    zero_ts=None,
+    filter=None,
+    pad_filters=None,
+    include_inferred=True,
+    xmlname="A port in a storm",
+    xmlcountry="A man without a country",
+    xmllatitude=0.0,
+    xmllongitude=0.0,
+    xmltimezone="0000",
+    xmlcomments="No comment",
+    xmlunits="m",
+    xmldecimalplaces="full",
+):
     if config:
-        mando.readconfig(config)
+        cltoolbox.readconfig(config)
 
     x = tappy(
         outputts=outputts,
@@ -2380,10 +2461,10 @@ def analysis(
 
 
 def main():
-    """Set debug and run mando.main function."""
+    """Set debug and run cltoolbox.main function."""
     if not os.path.exists("debug_tappy"):
         sys.tracebacklimit = 0
-    mando.main()
+    cltoolbox.main()
 
 
 if __name__ == "__main__":
