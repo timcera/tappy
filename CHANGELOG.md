@@ -1,3 +1,10 @@
+## 0.10.0 (2022-07-16)
+
+### Feat
+
+- uses tstoolbox read to support csv, wdm, hdf5, and xlsx files
+- use tstoolbox.read
+
 ## 0.9.6 (2022-07-13)
 
 ### Fix
