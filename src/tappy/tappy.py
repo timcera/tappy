@@ -973,8 +973,8 @@ class tappy(Util):
         # Read and parse data filename
         if def_filename is None:
             df = tstoolbox.read(filename)
-            self.elevation = df[0].values
-            self.dates = df.index.values
+            self.elevation = df.iloc[:, 0].astype("float64").values
+            self.dates = df.index.to_pydatetime()
         else:
             fp = sparser.ParseFileLineByLine(
                 filename, def_filename=def_filename, mode="r"
@@ -1982,7 +1982,7 @@ def writeconfig(iniconffile=f"{sys.argv[0]}.ini"):
     cltoolbox.writeconfig(iniconffile=iniconffile)
 
 
-@cltoolbox.command()
+@cltoolbox.command("prediction")
 def prediction_cli(
     xml_filename, start_date, end_date, interval, include_inferred=True, fname="-"
 ):
@@ -2097,7 +2097,11 @@ def analysis_cli(
      Constituent phases are based in the same time zone as the dates.
 
     :param data_filename: The time-series of elevations to be analyzed.
-    :param def_filename: Containes the definition string to parse the input
+        Can be a file name that is parsed with a companion definition file
+        or a CSV, WDM, HDF5, or XLSX file.  The options for each file type
+        are listed in "tstoolbox read --help" on the command line or
+        "help(tstoolbox.read) in Python.
+    :param def_filename: Contains the definition string to parse the input
         data.
     :param config: Read command line options from config file, override
         config file entries on the command line.
