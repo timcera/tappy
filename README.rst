@@ -23,7 +23,7 @@ levels into the component sine waves. It is written in Python and uses
 the least squares optimization and other functions in
 `SciPy <http://www.scipy.org>`__. The focus is to make the most accurate
 analysis possible. TAPPY only determines the constituents that are
-calculatable according to the length of the time series.
+calculable according to the length of the time series.
 
 Features
 --------
@@ -58,7 +58,7 @@ Features
    determination of tidal constituents.
 -  Can pad the usgs, doodson, and boxcar filters with predicted data to
    minimize edge effects of the filters.
--  Convenience function to fill missing values with the time series
+-  Convenience function to fill missing values with the predicted time series
 
 Requirements
 ------------
@@ -79,18 +79,73 @@ Install
 
 TAPPY Citations
 ---------------
-
+Barbosa, S. M., 2009. Analysis of trends in North Atlantic tidal amplitudes
+University of Porto, Portugal (susana.barbosa@fc.up.pt)
 http://meetingorganizer.copernicus.org/EGU2009/EGU2009-5154.pdf
+
+Bechet, V., Verstraeten, E., Hanert, E. and Deleersnijder, E., 2018.
+Multiple-year marine connectivity modeling in the Florida Coral Reef Tract to
+assess Acropora Cervicornis recovery. (Unpublished master’s thesis). Ecole
+polytechnique de Louvain, Université catholique de Louvain.
+
+Becker, K., Davis, E.E. and Villinger, H., Long‐Term Observations of
+Subseafloor Temperatures and Pressures in a Low‐Temperature, Off‐axis
+Hydrothermal System in North Pond on the Western Flank of the Mid‐Atlantic
+Ridge. Geochemistry, Geophysics, Geosystems, p.e2021GC010496.
+https://doi.org/10.1029/2022GC010496
+
+Cucco, A., Martín, J., Quattrocchi, G., Fenco, H., Umgiesser, G. and Fernández,
+D.A., 2022. Water Circulation and Transport Time Scales in the Beagle Channel,
+Southernmost Tip of South America. Journal of Marine Science and Engineering,
+10(7), p.941.
+https://doi.org/10.3390/jmse10070941
+
+Ferrarin, C., Roland, A., Bajo, M., Umgiesser, G., Cucco, A., Davolio, S.,
+Buzzi, A., Malguzzi, P. and Drofa, O., 2013. Tide-surge-wave modelling and
+forecasting in the Mediterranean Sea with focus on the Italian coast, Ocean
+Modelling, Vol. 61, January 2013, pp. 38-48.
+https://doi.org/10.1016/j.ocemod.2012.10.003
+
+Ferrarin, C., Zaggia, L., Paschini, E., Scirocco, T., Lorenzetti, G., Bajo, M.,
+Penna, P., Francavilla, M., D’Adamo, R. and Guerzoni, S., 2014. Hydrological
+regime and renewal capacity of the micro-tidal Lesina Lagoon, Italy. Estuaries
+and coasts, 37(1), pp.79-93.
+https://doi.org/10.1007/s12237-013-9660-x
+
+Ferrarin, C., Tomasin, A., Bajo, M., Petrizzo, A. and Umgiesser, G., 2015.
+Tidal changes in a heavily modified coastal wetland. Continental Shelf
+Research, 101, pp.22-33.
+https://doi.org/10.1016/j.csr.2015.04.002
+
+Gaeta, M.G., Samaras, A.G., Federico, I., Archetti, R., Maicu, F. and
+Lorenzetti, G., 2016. A coupled wave–3-D hydrodynamics model of the Taranto Sea
+(Italy): a multiple-nesting approach. Natural hazards and earth system
+sciences, 16(9), pp.2071-2083.
+https://doi.org/10.5194/nhess-16-2071-2016
+
+Neves, L.J.P.F., Barbosa, S.M. and Pereira, A.J.S.C., 2009. Indoor radon
+periodicities and their physical constraints: a study in the Coimbra region
+(Central Portugal). Journal of environmental radioactivity, 100(10),
+pp.896-904.
+https://doi.org/10.1016/j.jenvrad.2009.06.017
+
+Vergara-Chen, C., Pérez-Ruzafa, A., De Pascalis, F., Ghezzo, M.,
+Quispe-Becerraa, J.I., Hernández-García, R., Muñoza, I., Pérez-Ruzafa, I.M.,
+Umgiesserb, G. and Marcosa, C., 2018. Connectivity between coastal lagoons and
+sea: Asymmetrical effects on assemblages' and populations' structure.
+https://ridda2.utp.ac.pa/handle/123456789/4432
+
+Žust, L., Fettich, A., Kristan, M. and Ličer3, M., 2021. HIDRA 1.0:
+deep-learning-based ensemble sea level forecasting in the northern Adriatic,
+Geosci. Model Dev., 14, 2057–2074, 2021
+https://doi.org/10.5194/gmd-14-2057-2021
+This work is distributed under the Creative Commons Attribution 4.0 License.
 
 Please forward any citation of TAPPY to tim at cerazone.net.
 
 Contributions
 -------------
-
-Development
-~~~~~~~~~~~
-
-Any help is appreciated. If you want you could send a patch file to me,
-or if you would like to make a bunch of changes I can assign you
-developer privileges to the source code repository. Just contact me at
-tim at cerazone.net.
+Any help is appreciated. Best would be a pull request on Github or Bitbucket or
+if you would like to make a bunch of changes I can assign you developer
+privileges to the source code repository. Just contact me at tim at
+cerazone.net.

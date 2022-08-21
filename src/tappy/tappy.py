@@ -49,14 +49,16 @@ import os.path
 import sys
 
 import astronomia.calendar as cal
-import cltoolbox
 import numpy as np
+from cltoolbox import Program
 from numpy import pad
 from scipy.optimize import leastsq
-from tstoolbox import tstoolbox
+from tstoolbox.tstoolbox import read
 
 from tappy.tappy_lib import sparser
 from tappy.tappy_lib.parameter_database import _master_speed_dict, letter_to_factor_map
+
+program = Program("tappy", 0.0)
 
 # ===globals======================
 modname = "tappy"
@@ -332,7 +334,7 @@ class Util:
         # Required length of time series depends on Raleigh criteria to
         # differentiate beteen constituents of simmilar speed.
         #  Key is tidal constituent name from Schureman
-        #    speed is how fast the constiuent moves in radians/hour
+        #    speed is how fast the constituent moves in radians/hour
         #    VAU is V+u taken from Schureman
         #    FF is the node factor from Schureman
 
@@ -526,8 +528,8 @@ class Util:
             "ospeed": 14.496693984 * deg2rad,
             "VAU": T - s + h - 90 * deg2rad + zeta - nu + Q,
             # 2.307**0.5 factor was missed in Darwin's analysis and the wrong
-            # factor was used for M1 for many years.  Indicates the importance
-            # of M1 and NO1.  As with many constituents listed here, I have
+            # factor was used for M1 for many years.  Indicates how unimportant
+            # M1 and NO1 are!  As with many constituents listed here, I have
             # included them for completeness rather than necessity.
             "FF": (
                 self.tidal_dict["O1"]["FF"]
@@ -718,7 +720,7 @@ class Util:
             #'psi1': [1, 'AAAZZYA', [1, 1, 1, 0, 0, -1, 1]],
         }
 
-        # Can calculate the speed at the begining of the time series.
+        # Can calculate the speed at the beginning of the time series.
         # Doesn't really matter unless analyzing tides in 5000 C.E.,  because the speeds do change.
         (
             zetatoss,
@@ -972,7 +974,7 @@ class tappy(Util):
     def open(self, filename, def_filename=None):
         # Read and parse data filename
         if def_filename is None:
-            df = tstoolbox.read(filename)
+            df = read(filename)
             self.elevation = df.iloc[:, 0].astype("float64").values
             self.dates = df.index.to_pydatetime()
         else:
@@ -1443,7 +1445,7 @@ class tappy(Util):
         if nstype == "kalman":
             # I threw this in from an example on scipy's web site.  I will keep
             # it here, but I can't see an immediate use for in in tidal
-            # analysis.  It happens out all frequencies.
+            # analysis.  It dampens out all frequencies.
 
             # Might be able to use it it fill missing values.
 
@@ -1531,7 +1533,7 @@ class tappy(Util):
 
             # (1010010110201102112 0 2112011020110100101)/30.
 
-            # In "Data Analaysis and Methods in Oceanography":
+            # In "Data Analysis and Methods in Oceanography":
 
             # "The cosine-Lanczos filter, the transform filter, and the
             # Butterworth filter are often preferred to the Godin filter,
@@ -1969,7 +1971,7 @@ class tappy(Util):
         pass
 
 
-@cltoolbox.command("writeconfig")
+@program.command("writeconfig")
 def writeconfig_cli(iniconffile=f"{sys.argv[0]}.ini"):
     """OVERWRITES an ini style config file that holds all of default the command line options.
 
@@ -1982,7 +1984,7 @@ def writeconfig(iniconffile=f"{sys.argv[0]}.ini"):
     cltoolbox.writeconfig(iniconffile=iniconffile)
 
 
-@cltoolbox.command("prediction")
+@program.command("prediction")
 def prediction_cli(
     xml_filename, start_date, end_date, interval, include_inferred=True, fname="-"
 ):
@@ -2063,7 +2065,7 @@ def prediction(
 
 
 # =============================
-@cltoolbox.command("analysis")
+@program.command("analysis")
 def analysis_cli(
     data_filename,
     def_filename=None,
@@ -2468,7 +2470,7 @@ def main():
     """Set debug and run cltoolbox.main function."""
     if not os.path.exists("debug_tappy"):
         sys.tracebacklimit = 0
-    cltoolbox.main()
+    program()
 
 
 if __name__ == "__main__":
