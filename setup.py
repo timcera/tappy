@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import os
 import shlex
 import subprocess
 import sys
@@ -9,12 +8,8 @@ from setuptools import setup
 
 pkg_name = "tappy"
 
-version = open("VERSION").readline().strip()
-
-# temporarily redirect config directory to prevent matplotlib importing
-# testing that for writeable directory which results in sandbox error in
-# certain easy_install versions
-os.environ["MPLCONFIGDIR"] = "."
+with open("VERSION", encoding="ascii") as version_file:
+    version = version_file.readline().strip()
 
 if sys.argv[-1] == "publish":
     subprocess.run(shlex.split("cleanpy ."), check=True)
@@ -24,6 +19,4 @@ if sys.argv[-1] == "publish":
     )
     sys.exit()
 
-setup(
-    test_suite="tests",
-)
+setup()

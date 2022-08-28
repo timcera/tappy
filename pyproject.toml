@@ -1,10 +1,88 @@
+[project]
+name = "tappy"
+dynamic = ["version"]
+readme = "README.rst"
+description = "Command line script and Python library perform tidally-based analysis of water level data."
+requires-python = ">=3.7.1"
+dependencies = [
+    "tstoolbox > 103.7.8",
+    "astronomia",
+    "cltoolbox",
+    "numpy",
+    ]
+license = {file = "LICENSE.txt"}
+authors = [
+    {name = "Tim Cera", email = "tim@cerazone.net"}
+    ]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: End Users/Desktop",
+    "Intended Audience :: Developers",
+    "Environment :: Console",
+    "License :: OSI Approved :: BSD License",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    ]
+keywords = ["tidal-analysis",
+            "cli-app",
+            "tide-analysis",
+            "tide-prediction",
+            "tide-filter",
+            "python",
+            ]
 
-[tool.check-manifest]
-ignore = ["docs/_function_autosummary/*",
-          ".coverage",
-          ".deepsource.toml",
-          ".ipynb_checkpoints/*"]
+[project.optional-dependencies]
+dev = [
+    "black",
+    "cleanpy",
+    "twine",
+    "pytest",
+    "coverage",
+    "flake8",
+    "pytest-cov",
+    "pytest-mpl",
+    "pre-commit",
+    "black-nbconvert",
+    "blacken-docs",
+    "velin",
+    "isort",
+    "pyupgrade",
+    "commitizen",
+    ]
 
+[project.scripts]
+tappy = "tappy.tappy:main"
+
+[project_urls]
+documentation = "https://timcera.bitbucket.io/tappy/docs/index.html#tappy-documentation"
+github = "https://github.com/timcera/tappy"
+bitbucket = "https://bitbucket.org/timcera/tappy/src/main/"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.dynamic]
+version = {file = "VERSION"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+exclude = ["examples*", "tools*", "docs*", "tappy.tests*"]
+
+[build-system]
+requires = [
+    "setuptools",
+    "wheel",
+    "oldest-supported-numpy",
+]
+build-backend = "setuptools.build_meta"
 
 [tool.commitizen]
 name = "cz_conventional_commits"
@@ -12,17 +90,3 @@ version = "0.10.0"
 tag_format = "$version"
 version_files = ["VERSION"]
 update_changelog_on_bump = true
-
-
-[build-system]
-requires = [
-    "setuptools",
-    "oldest-supported-numpy",
-]
-build-backend = "setuptools.build_meta"
-
-# This can't be specified in pyproject.toml because can't figure out how to add
-# toml support to coverage in github actions, but the equivalent setting can be
-# in setup.cfg.
-# [tool.coverage.run]
-# relative_files = true
