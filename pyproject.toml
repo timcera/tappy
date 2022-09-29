@@ -1,7 +1,6 @@
 [project]
 name = "tappy"
-dynamic = ["version"]
-readme = "README.rst"
+dynamic = ["version", "readme"]
 description = "Command line script and Python library perform tidally-based analysis of water level data."
 requires-python = ">=3.7.1"
 dependencies = [
@@ -10,7 +9,7 @@ dependencies = [
     "cltoolbox",
     "numpy",
     ]
-license = {file = "LICENSE.txt"}
+license = {text = "BSD-3-Clause"}
 authors = [
     {name = "Tim Cera", email = "tim@cerazone.net"}
     ]
@@ -67,14 +66,16 @@ github = "https://github.com/timcera/tappy"
 bitbucket = "https://bitbucket.org/timcera/tappy/src/main/"
 
 [tool.setuptools]
+license-files = ["LICENSE.txt"]
 include-package-data = true
 
 [tool.setuptools.dynamic]
+readme = {file = "README.rst"}
 version = {file = "VERSION"}
 
 [tool.setuptools.packages.find]
 where = ["src"]
-exclude = ["examples*", "tools*", "docs*", "tappy.tests*"]
+exclude = ["examples*", "tools*", "docs*", "tstoolbox.tests*"]
 
 [build-system]
 requires = [
@@ -83,6 +84,12 @@ requires = [
     "oldest-supported-numpy",
 ]
 build-backend = "setuptools.build_meta"
+
+[tool.check-manifest]
+ignore = ["docs/_function_autosummary/*",
+          ".coverage",
+          ".deepsource.toml",
+          ".ipynb_checkpoints/*"]
 
 [tool.commitizen]
 name = "cz_conventional_commits"

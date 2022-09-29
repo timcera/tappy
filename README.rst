@@ -1,22 +1,32 @@
 .. image:: https://github.com/timcera/tappy/actions/workflows/python-package.yml/badge.svg
+    :alt: Tests
     :target: https://github.com/timcera/tappy/actions/workflows/python-package.yml
     :height: 20
 
-.. image:: https://coveralls.io/repos/timcera/tappy/badge.png?branch=master
+.. image:: https://img.shields.io/coveralls/github/timcera/tappy
+    :alt: Test Coverage
     :target: https://coveralls.io/r/timcera/tappy?branch=master
     :height: 20
 
 .. image:: https://img.shields.io/pypi/v/tappy.svg
     :alt: Latest release
-    :target: https://pypi.python.org/pypi/tappy
+    :target: https://pypi.python.org/pypi/tappy/
+    :height: 20
 
-.. image:: http://img.shields.io/badge/license-BSD-lightgrey.svg
+.. image:: https://img.shields.io/pypi/l/tappy.svg
     :alt: BSD-3 clause license
     :target: https://pypi.python.org/pypi/tappy/
+    :height: 20
 
-.. image:: http://img.shields.io/pypi/dd/tappy.svg
+.. image:: https://img.shields.io/pypi/dd/tappy.svg
     :alt: tappy downloads
     :target: https://pypi.python.org/pypi/tappy/
+    :height: 20
+
+.. image:: https://img.shields.io/pypi/pyversions/tappy
+    :alt: PyPI - Python Version
+    :target: https://pypi.org/project/tappy/
+    :height: 20
 
 TAPPY is a tidal analysis package. It breaks down a record of water
 levels into the component sine waves. It is written in Python and uses
@@ -94,11 +104,30 @@ Hydrothermal System in North Pond on the Western Flank of the Mid‐Atlantic
 Ridge. Geochemistry, Geophysics, Geosystems, p.e2021GC010496.
 https://doi.org/10.1029/2022GC010496
 
+Billings, W.Z., 2018. An Exploration of the Two-Dimensional Poroelastic
+Properties of Oceanic Crust at the Formation Scale.  University of
+Miami ProQuest Dissertations Publishing,  10846298.
+
+Campos, E.J., Kjerfve, B., Cavalcante, G., Vieira, F. and Abouleish, M., 2022.
+Water exchange across the Strait of Hormuz. Effects of tides and rivers runoff.
+Regional Studies in Marine Science, 52, p.102336.
+https://doi.org/10.1016/j.rsma.2022.102336
+
 Cucco, A., Martín, J., Quattrocchi, G., Fenco, H., Umgiesser, G. and Fernández,
 D.A., 2022. Water Circulation and Transport Time Scales in the Beagle Channel,
 Southernmost Tip of South America. Journal of Marine Science and Engineering,
 10(7), p.941.
 https://doi.org/10.3390/jmse10070941
+
+Desmet, N., 2019. Modelling coral larvae exchanges between the Great Barrier
+Reef and outer reefs. Ecole polytechnique de Louvain, Université catholique de
+Louvain. Prom. : Hanert, Emmanuel ; Deleersnijder, Eric.
+http://hdl.handle.net/2078.1/thesis:19591
+
+Akmal. P.N.E., 2013. Determination of the Permeability of the South Chamorro
+Seamount in Mariana Forearc Crust Using Pressure Response to Tidal Loading
+Method. University of Miami.
+https://scholarship.miami.edu/esploro/outputs/991031448068902976
 
 Ferrarin, C., Roland, A., Bajo, M., Umgiesser, G., Cucco, A., Davolio, S.,
 Buzzi, A., Malguzzi, P. and Drofa, O., 2013. Tide-surge-wave modelling and
@@ -123,17 +152,34 @@ Lorenzetti, G., 2016. A coupled wave–3-D hydrodynamics model of the Taranto Se
 sciences, 16(9), pp.2071-2083.
 https://doi.org/10.5194/nhess-16-2071-2016
 
+Lavaud, L., Bertin, X., Martins, K. and Arnaud, G., 2019. The contribution of
+short wave breaking in the storm surge associated with Klaus (January 24, 2009)
+in the southern bay of biscay. In Coastal Sediments 2019: Proceedings of the
+9th International Conference (pp. 1411-1423).
+https://doi.org/10.1142/9789811204487_0123
+
 Neves, L.J.P.F., Barbosa, S.M. and Pereira, A.J.S.C., 2009. Indoor radon
 periodicities and their physical constraints: a study in the Coimbra region
 (Central Portugal). Journal of environmental radioactivity, 100(10),
 pp.896-904.
 https://doi.org/10.1016/j.jenvrad.2009.06.017
 
+Pérez-Ruzafa, A., De Pascalis, F., Ghezzo, M., Quispe-Becerra, J.I.,
+Hernández-García, R., Muñoz, I., Vergara, C., Pérez-Ruzafa, I.M., Umgiesser, G.
+and Marcos, C., 2019. Connectivity between coastal lagoons and sea:
+Asymmetrical effects on assemblages' and populations' structure. Estuarine,
+Coastal and Shelf Science, 216, pp.171-186.
+https://doi.org/10.1016/j.ecss.2018.02.031
+
 Vergara-Chen, C., Pérez-Ruzafa, A., De Pascalis, F., Ghezzo, M.,
-Quispe-Becerraa, J.I., Hernández-García, R., Muñoza, I., Pérez-Ruzafa, I.M.,
-Umgiesserb, G. and Marcosa, C., 2018. Connectivity between coastal lagoons and
+Quispe-Becerra, J.I., Hernández-García, R., Muñoz, I., Pérez-Ruzafa, I.M.,
+Umgiesserb, G. and Marcos, C., 2018. Connectivity between coastal lagoons and
 sea: Asymmetrical effects on assemblages' and populations' structure.
 https://ridda2.utp.ac.pa/handle/123456789/4432
+
+Vinas, K.A., 2013. Mariana forearc crust CORK pressure data: observations and
+implications. University of Miami.
+https://scholarship.miami.edu/esploro/outputs/991031448074702976
 
 Žust, L., Fettich, A., Kristan, M. and Ličer3, M., 2021. HIDRA 1.0:
 deep-learning-based ensemble sea level forecasting in the northern Adriatic,
