@@ -1,3 +1,9 @@
+## 0.10.1 (2022-09-29)
+
+### Refactor
+
+- updated pyproject.toml
+
 ## 0.10.0 (2022-07-16)
 
 ### Feat
