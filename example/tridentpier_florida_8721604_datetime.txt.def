@@ -4,10 +4,10 @@
 decimal_sep = "."
 
 
-# TAPPy needs the variables 
-#   'datetime': a single integer or real listing time units after a origin 
-#    OR 
-#   'year', 'month', 'day', 'hour', optional['minute', 'second'] 
+# TAPPy needs the variables
+#   'datetime': a single integer or real listing time units after a origin
+#    OR
+#   'year', 'month', 'day', 'hour', optional['minute', 'second']
 #    AND
 #   'water_level').
 
@@ -15,7 +15,7 @@ decimal_sep = "."
 
 # integer_as_datetime and real_as_datetime require an origin and unit
 
-parse = [ 
+parse = [
           integer_as_datetime('datetime', origin=datetime.datetime(1999,12,31,23), unit='hours'),
           integer('state', exact=3),
           integer_as_string('station', exact=4),
@@ -26,4 +26,3 @@ parse = [
           positive_integer('toss_minute'),
           real('water_level'),
          ]
-

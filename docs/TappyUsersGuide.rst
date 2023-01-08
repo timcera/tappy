@@ -85,16 +85,16 @@ Matching Data File
 
    <td>
 
-You need to specify the separator between 
+You need to specify the separator between
 =========================================
 
-the integer part and the decimal 
+the integer part and the decimal
 ================================
 
-part of real numbers, even if you only 
+part of real numbers, even if you only
 ======================================
 
-have integers in your data file. 
+have integers in your data file.
 ================================
 
 decimal_sep = “.” # TAPPy needs the variables ‘year’, ‘month’, # ‘day’,

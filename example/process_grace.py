@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 import datetime
 import string
@@ -8,7 +7,7 @@ import scipy as N
 
 filename = "mayport_florida_8720220_data.txt"
 
-fp = open(filename, "r")
+fp = open(filename)
 fp.readline()
 elevation = []
 dates = []

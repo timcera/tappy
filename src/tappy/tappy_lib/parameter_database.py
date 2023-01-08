@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 letter_to_factor_map = {
     "Z": 0,
     "Y": -1,
