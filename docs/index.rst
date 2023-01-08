@@ -22,6 +22,8 @@ Table of Contents
    CompareTidalFilters
    HarmonicAnalysis
    TidalScience
+   command_line
+   function_summary
    contributing
    authors
    license

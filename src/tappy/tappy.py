@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 """
 NAME:
@@ -47,6 +46,7 @@ import os.path
 
 # ===imports======================
 import sys
+from contextlib import suppress
 
 import astronomia.calendar as cal
 import numpy as np
@@ -1910,7 +1910,7 @@ class tappy(Util):
         package = self.astronomic(t.dates)
         (zeta, nu, nup, nupp, kap_p, ii, R, Q, T, self.jd, s, h, Nv, p, p1) = package
         (speed_dict, key_list) = t.which_constituents(len(t.dates), package)
-        for k in [
+        for k in (
             "J1",
             "K1",
             "K2",
@@ -1926,8 +1926,8 @@ class tappy(Util):
             "MO3",
             "Mf",
             "Mm",
-        ]:
-            for i in [1900, 1930]:
+        ):
+            for i in (1900, 1930):
                 print(i, k, speed_dict[k]["FF"][i - 1900])
                 if k == "M2":
                     print(
@@ -1969,19 +1969,6 @@ class tappy(Util):
 
     def print_node_factor_table(self):
         pass
-
-
-@program.command("writeconfig")
-def writeconfig_cli(iniconffile=f"{sys.argv[0]}.ini"):
-    """OVERWRITES an ini style config file that holds all of default the command line options.
-
-    :param iniconffile: the file name of the ini file, defaults to 'script.ini'.
-    """
-    writeconfig(iniconffile)
-
-
-def writeconfig(iniconffile=f"{sys.argv[0]}.ini"):
-    cltoolbox.writeconfig(iniconffile=iniconffile)
 
 
 @program.command("prediction")
@@ -2046,15 +2033,11 @@ def prediction(
     (speed_dict, key_list) = u.which_constituents(len(u.dates), package)
 
     prediction = 0.0
-    try:
+    with suppress(KeyError):
         prediction = rin["Z0"]
-    except KeyError:
-        pass
 
-    try:
+    with suppress(ValueError):
         skey_list.remove("Z0")
-    except ValueError:
-        pass
 
     calcdates = (
         np.array(list(range(len(u.dates))), dtype=np.float64) * float(interval) / 60.0
@@ -2069,7 +2052,6 @@ def prediction(
 def analysis_cli(
     data_filename,
     def_filename=None,
-    config=None,
     quiet=False,
     debug=False,
     outputts=False,
@@ -2105,8 +2087,6 @@ def analysis_cli(
         "help(tstoolbox.read) in Python.
     :param def_filename: Contains the definition string to parse the input
         data.
-    :param config: Read command line options from config file, override
-        config file entries on the command line.
     :param quiet: Print nothing to the screen.
     :param debug: Print debug messages.
     :param outputts: Output time series for each constituent.
@@ -2159,7 +2139,6 @@ def analysis_cli(
         analysis(
             data_filename,
             def_filename=def_filename,
-            config=config,
             quiet=quiet,
             debug=debug,
             outputts=outputts,
@@ -2189,7 +2168,6 @@ def analysis_cli(
 def analysis(
     data_filename,
     def_filename=None,
-    config=None,
     quiet=False,
     debug=False,
     outputts=False,
@@ -2213,9 +2191,6 @@ def analysis(
     xmlunits="m",
     xmldecimalplaces="full",
 ):
-    if config:
-        cltoolbox.readconfig(config)
-
     x = tappy(
         outputts=outputts,
         outputxml=outputxml,
@@ -2316,7 +2291,7 @@ def analysis(
 
     if x.filter:
         for item in x.filter.split(","):
-            if item in [
+            if item in (
                 "mstha",
                 "wavelet",
                 "cd",
@@ -2326,7 +2301,7 @@ def analysis(
                 "lecolazet1",
                 "kalman",
                 "transform",
-            ]:  # 'lecolazet', 'godin', 'sfa']:
+            ):  # 'lecolazet', 'godin', 'sfa']:
                 filtered_dates, result = x.filters(item, x.dates, x.elevation)
                 x.write_file(filtered_dates, result, fname=f"outts_filtered_{item}.dat")
         (x.speed_dict, x.key_list) = x.which_constituents(

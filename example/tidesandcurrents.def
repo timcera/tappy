@@ -6,7 +6,7 @@ decimal_sep = "."
 
 # TAPPy needs the variables 'year', 'month', 'day', 'hour', 'minute', 'water_level'.
 # Any other variable name can be used as a placeholder.
-parse = [ 
+parse = [
           integer('state', exact=3),
           integer_as_string('station', exact=4),
           positive_integer('year', exact=4),
@@ -16,4 +16,3 @@ parse = [
           positive_integer('minute'),
           real('water_level'),
          ]
-

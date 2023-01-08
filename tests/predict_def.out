@@ -7,8 +7,7 @@ decimal_sep = "."
 
 # TAPPy needs the variables 'year', 'month', 'day', 'hour', 'minute', 'water_level'.
 # Any other variable name can be used as a placeholder.
-parse = [ 
+parse = [
           isoformat_as_datetime('datetime'),
           real('water_level')
          ]
-
