@@ -22,10 +22,11 @@ class TappyTest(TestCase):
         self.cwd = os.getcwd()
         self.tmpdir = tempfile.mkdtemp()
         os.chdir(self.tmpdir)
+        open("debug_tappy", "a").close()
         for files in ["*.dat", "*.xml"]:
             for f in glob.glob(files):
                 os.remove(f)
-        self.con_output1 = subprocess.Popen(
+        ret = subprocess.call(
             [
                 "tappy",
                 "analysis",
@@ -39,10 +40,9 @@ class TappyTest(TestCase):
                 '--outputxml="testout.xml"',
                 #        '--filter="transform"',
                 "--include_inferred",
-            ],
-            stdout=subprocess.PIPE,
+            ]
         )
-        sts = os.waitpid(self.con_output1.pid, 0)[1]
+        print(ret)
 
     def tearDown(self):
         os.chdir(self.cwd)
@@ -68,18 +68,18 @@ class TappyTest(TestCase):
     def test_closure(self):
         os.chdir(self.tmpdir)
         inputf = os.path.join(self.cwd, "example", "mayport_florida_8720220_data.txt")
-        self.con_output1 = subprocess.call(
+        _ = subprocess.call(
             shlex.split(
                 f"tappy analysis {inputf} --outputxml testout.xml --include_inferred"
             )
         )
-        self.con_output2 = subprocess.call(
+        _ = subprocess.call(
             shlex.split(
                 f"tappy prediction testout.xml 2000-01-01T00:00:00 2000-02-01T00:00:00 60 --fname predict.out"
             )
         )
         def_filename = os.path.join(self.cwd, "tests", "predict_def.out")
-        self.con_output3 = subprocess.call(
+        _ = subprocess.call(
             shlex.split(
                 f"tappy analysis predict.out --def_filename {def_filename} --outputxml testoutclosure.xml --include_inferred"
             )
