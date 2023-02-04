@@ -53,7 +53,7 @@ import numpy as np
 from cltoolbox import Program
 from numpy import pad
 from scipy.optimize import leastsq
-from tstoolbox.tstoolbox import read
+from toolbox_utils import tsutils
 
 from tappy.tappy_lib import sparser
 from tappy.tappy_lib.parameter_database import _master_speed_dict, letter_to_factor_map
@@ -972,9 +972,16 @@ class tappy(Util):
         self.dates = []
 
     def open(self, filename, def_filename=None):
+        # Test to make sure there isn't a definition file in the same directory
+        # as the data file.
+        if def_filename is None:
+            splits = os.path.splitext(filename)
+            test_filename = f"{splits[0]}_def{splits[1]}"
+            if os.path.exists(test_filename):
+                def_filename = test_filename
         # Read and parse data filename
         if def_filename is None:
-            df = read(filename)
+            df = tsutils.common_kwds(filename)
             self.elevation = df.iloc[:, 0].astype("float64").values
             self.dates = df.index.to_pydatetime()
         else:
