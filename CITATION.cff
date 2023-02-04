@@ -1,0 +1,36 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: tappy
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Timothy
+    family-names: Cera
+    email: tim@cerazone.net
+    orcid: 'https://orcid.org/0000-0003-4613-7697'
+identifiers:
+  - type: url
+    value: 'https://pypi.org/project/tappy/'
+    description: >-
+      Python Package Index entry for TAPPy (Tidal Analysis
+      Program Python)
+repository-code: 'https://github.com/timcera/tappy'
+url: >-
+  https://timcera.bitbucket.io/tappy/docs/index.html#tappy-documentation
+repository: 'https://bitbucket.org/timcera/tappy/src/main/'
+abstract: >-
+  TAPPY is a tidal analysis package. It breaks down a record
+  of water levels into the component sine waves. It is
+  written in Python and uses the least squares optimization
+  and other functions in SciPy. The focus is to make the
+  most accurate analysis possible. TAPPY only determines the
+  constituents that are calculable according to the length
+  of the time series.
+keywords:
+  - tides
+  - tidal
+license: BSD-3-Clause
