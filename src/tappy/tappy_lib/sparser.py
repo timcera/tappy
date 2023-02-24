@@ -103,6 +103,7 @@ decimal_sep = "."
 # Extra dictionary
 extra_dict = {}
 
+
 # ====================================
 class DefinitionFileNotFoundError(Exception):
     def __init__(self, def_filename):

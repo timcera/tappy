@@ -527,7 +527,7 @@ class Util:
         self.tidal_dict["NO1"] = {
             "ospeed": 14.496693984 * deg2rad,
             "VAU": T - s + h - 90 * deg2rad + zeta - nu + Q,
-            # 2.307**0.5 factor was missed in Darwin's analysis and the wrong
+            # 2.307**0.5 factor was missed in Darwin's  and the wrong
             # factor was used for M1 for many years.  Indicates how unimportant
             # M1 and NO1 are!  As with many constituents listed here, I have
             # included them for completeness rather than necessity.
@@ -798,7 +798,7 @@ class Util:
                 self.tidal_dict[key]["VAU"] = np.mod(self.tidal_dict[key]["VAU"], 360)
 
         num_hours = (jd[-1] - jd[0]) * 24
-        numpoint = len(jd) * 0.5 * rayleigh_comp
+        len(jd) * 0.5 * rayleigh_comp
         if num_hours < 13:
             print("Cannot calculate any constituents from this record length")
             sys.exit()
@@ -949,8 +949,6 @@ class tappy(Util):
         The initialization of the Tappy class.
         """
 
-        ftn = "tappy.__init__"
-
         self.quiet = kwds.pop("quiet")
         self.debug = kwds.pop("debug")
         self.outputts = kwds.pop("outputts")
@@ -1052,7 +1050,7 @@ class tappy(Util):
 
         if task == "fill":
             # Create real dates
-            start = dates[0]
+            dates[0]
             # Dominant interval
             interval.sort()
             interval = interval[len(interval) / 2]
@@ -1136,7 +1134,6 @@ class tappy(Util):
 
         H = {}
         phase = {}
-        slope = {}
         for index, key in enumerate(key_list):
             H[key] = p[index]
             phase[key] = p[index + len(key_list)]
@@ -1403,7 +1400,6 @@ class tappy(Util):
         dates_filled = dates
         nelevation = elevation
         if np.any(interval < delta_dt):
-
             # Probably the worst way you can get the average for the hour...
 
             dt = dates[0]
@@ -1458,7 +1454,6 @@ class tappy(Util):
 
             # intial parameters
             sz = (len(nelevation),)  # size of array
-            x = -0.37727  # truth value
 
             Q = (max(nelevation) - min(nelevation)) / 10000.0  # process variance
             Q = 1.0e-2
@@ -1700,11 +1695,9 @@ class tappy(Util):
             return dates_filled[nslice], relevation[nslice]
 
         if nstype == "wavelet":
-            import pylab
             import pywt
 
             for wl in pywt.wavelist():
-
                 w = pywt.Wavelet(wl)
 
                 max_level = pywt.dwt_max_level(len(elevation), w.dec_len)

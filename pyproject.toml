@@ -3,7 +3,7 @@ requires = [
     "setuptools>=45",
     "setuptools_scm[toml]>=6.2",
     "wheel",
-    "oldest-supported-numpy",
+    "oldest-supported-numpy"
 ]
 build-backend = "setuptools.build_meta"
 
@@ -13,15 +13,15 @@ dynamic = ["version", "readme"]
 description = "Command line script and Python library perform tidally-based analysis of water level data."
 requires-python = ">=3.7.1"
 dependencies = [
-    "toolbox_utils >= 2.0.0, < 3.0.0",
+    "toolbox_utils >= 3.0.0, < 4.0.0",
     "astronomia",
     "cltoolbox",
-    "numpy",
-    ]
+    "numpy"
+]
 license = {text = "BSD-3-Clause"}
 authors = [
     {name = "Tim Cera", email = "tim@cerazone.net"}
-    ]
+]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Science/Research",
@@ -38,15 +38,16 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Topic :: Scientific/Engineering :: Information Analysis",
     "Topic :: Scientific/Engineering",
-    "Topic :: Software Development :: Libraries :: Python Modules",
-    ]
-keywords = ["tidal-analysis",
-            "cli-app",
-            "tide-analysis",
-            "tide-prediction",
-            "tide-filter",
-            "python",
-            ]
+    "Topic :: Software Development :: Libraries :: Python Modules"
+]
+keywords = [
+    "tidal-analysis",
+    "cli-app",
+    "tide-analysis",
+    "tide-prediction",
+    "tide-filter",
+    "python"
+]
 
 [project.optional-dependencies]
 dev = [
@@ -64,8 +65,8 @@ dev = [
     "velin",
     "isort",
     "pyupgrade",
-    "commitizen",
-    ]
+    "commitizen"
+]
 
 [project.scripts]
 tappy = "tappy.tappy:main"
@@ -78,10 +79,12 @@ bitbucket = "https://bitbucket.org/timcera/tappy/src/main/"
 [tool]
 
 [tool.check-manifest]
-ignore = ["docs/_function_autosummary/*",
-          ".coverage",
-          ".deepsource.toml",
-          ".ipynb_checkpoints/*"]
+ignore = [
+    "docs/_function_autosummary/*",
+    ".coverage",
+    ".deepsource.toml",
+    ".ipynb_checkpoints/*"
+]
 
 [tool.commitizen]
 name = "cz_conventional_commits"
