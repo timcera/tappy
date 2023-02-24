@@ -75,7 +75,7 @@ class TappyTest(TestCase):
         )
         _ = subprocess.call(
             shlex.split(
-                f"tappy prediction testout.xml 2000-01-01T00:00:00 2000-02-01T00:00:00 60 --fname predict.out"
+                "tappy prediction testout.xml 2000-01-01T00:00:00 2000-02-01T00:00:00 60 --fname predict.out"
             )
         )
         def_filename = os.path.join(self.cwd, "tests", "predict_def.out")

@@ -42,6 +42,7 @@ import numpy as np
 # ===globals======================
 modname = "filter"
 
+
 # ===utilities====================
 def msg(txt):
     """Send message to stdout."""
