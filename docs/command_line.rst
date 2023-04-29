@@ -16,8 +16,3 @@ prediction
 ~~~~~~~~~~
 .. program-output:: tappy prediction --help
    :prompt:
-
-writeconfig
-~~~~~~~~~~~
-.. program-output:: tappy writeconfig --help
-   :prompt:
