@@ -8,4 +8,3 @@ Python API Function Summary
 
     tappy.tappy.analysis
     tappy.tappy.prediction
-    tappy.tappy.writeconfig

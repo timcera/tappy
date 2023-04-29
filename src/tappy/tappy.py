@@ -94,11 +94,22 @@ def usage():
 
 
 def interpolate(data, start, stop, iavg):
-    """
-    Linearly interpolate across a section of a vector.  A function used by
-    zone_calculations.
-    """
+    """Linearly interpolate across a section of a vector.
 
+    A function used by zone_calculations.
+
+    Parameters
+    ----------
+    data : array
+        The data to be interpolated.
+    start : int
+        The starting index of the section to be interpolated.
+    stop : int
+        The ending index of the section to be interpolated.
+    iavg : int
+        The number of points to average on either side of the section to be
+        interpolated.
+    """
     ssl = slice(0, start) if start < iavg else slice(start - iavg, start)
     if stop > (len(data) - iavg):
         stop_sl = slice(stop + 1, len(data))
@@ -114,11 +125,21 @@ def interpolate(data, start, stop, iavg):
 
 
 def zone_calculations(zftn, data, mask, limit=25):
-    """
-    Apply the supplied function across the patches (zones) of missing
-    values in the input vector data.  Used to fill missing or bad data.
-    """
+    """Apply a function across the patches (zones) of missing values.
 
+    Used to fill missing or bad data.
+
+    Parameters
+    ----------
+    zftn : function
+        The function to be applied to the data.
+    data : array
+        The data to be processed.
+    mask : array
+        A boolean array with True values where the data is missing or bad.
+    limit : int
+        The maximum number of points to be processed by the function.
+    """
     start = None
     stop = None
     for index, val in enumerate(mask):
@@ -1977,12 +1998,20 @@ def prediction_cli(
 ):
     """Prediction based upon earlier constituent analysis saved in IHOTC XML transfer format.
 
-    :param xml_filename: The tidal constituents in IHOTC XML transfer format.
-    :param start_date: The start date as a ISO 8601 string. '2010-01-01T00:00:00'
-    :param end_date: The end date as a ISO 8601 string. '2011-01-01T00:00:00:00'
-    :param interval: The interval as the number of minutes.
-    :param include_inferred: Include the inferred constituents.
-    :param fname: Output filename, default is '-' to print to screen.
+    Parameters
+    ----------
+    xml_filename : str
+        The tidal constituents in IHOTC XML transfer format.
+    start_date : str
+        The start date as a ISO 8601 string. '2010-01-01T00:00:00'
+    end_date : str
+        The end date as a ISO 8601 string. '2011-01-01T00:00:00:00'
+    interval : int
+        The interval as the number of minutes.
+    include_inferred : bool, optional
+        Include the inferred constituents.
+    fname : str, optional
+        Output filename, default is '-' to print to screen.
     """
     prediction(
         xml_filename,
@@ -2004,7 +2033,7 @@ def prediction(
     rin = {}
     phasein = {}
     skey_list = []
-    for constituent in root.getiterator("Harmonic"):
+    for constituent in root.iter("Harmonic"):
         inf = constituent.findtext("inferred")
         if (not include_inferred) and (inf.lower() == "true"):
             continue
@@ -2080,60 +2109,82 @@ def analysis_cli(
      Constituent amplitude units are the same as the input heights.
      Constituent phases are based in the same time zone as the dates.
 
-    :param data_filename: The time-series of elevations to be analyzed.
-        Can be a file name that is parsed with a companion definition file
-        or a CSV, WDM, HDF5, or XLSX file.  The options for each file type
-        are listed in "tstoolbox read --help" on the command line or
-        "help(tstoolbox.read) in Python.
-    :param def_filename: Contains the definition string to parse the input
-        data.
-    :param quiet: Print nothing to the screen.
-    :param debug: Print debug messages.
-    :param outputts: Output time series for each constituent.
-    :param ephemeris: Print out ephemeris tables.
-    :param rayleigh: The Rayleigh coefficient is used to compare against to
-        determine time series length to differentiate between two
-        frequencies.  [default: default]
-    :param missing_data: What should be done if there is missing data.  One
-        of: fail, ignore, or fill. [default: default]
-    :param linear_trend: Include a linear trend in the least squares fit.
-    :param remove_extreme: Remove values outside of 2 standard deviations
-        before analysis.
-    :param zero_ts: Zero the input time series before constituent analysis
-        by subtracting filtered data. One of: transform,usgs,doodson,boxcar
-    :param filter:  Filter input data set with tide elimination filters. The
-        -o outputts option is implied. Any mix separated by commas and no
-        spaces: transform,usgs,doodson,boxcar
-    :param pad_filters: Pad input data set with values to return same size
-        after filtering.  Realize edge effects are unavoidable.  One of
-        ["tide", "minimum", "maximum", "mean", "median", "reflect", "wrap"]
-    :param include_inferred: Do not incorporate any inferred constituents
-        into the least squares fit.
-    :param print_vau_table: For debugging - will print a table of V and u
-        values to compare against Schureman.
-    :param outputxml: File name to output constituents as IHOTC XML format.
-    :param xmlname: Not used in analysis. Used ONLY to complete the XML
-        file. Name of the station supplying the observations. Defaults to 'A
-        port in a storm'.
-    :param xmlcountry: Not used in analysis. Used ONLY to complete the XML
-        file. Name of the country containing the station. Defaults to 'A man
-        without a country'.
-    :param xmllatitude: Not used in analysis. Used ONLY to complete the XML
-        file. Latitude of the station. Defaults to 0.0.
-    :param xmllongitude: Not used in analysis. Used ONLY to complete the XML
-        file. Longitude of the station. Defaults to 0.0.
-    :param xmltimezone: Not used in analysis. Used ONLY to complete the XML
-        file. Time zone of the station. Defaults to '0000'.
-    :param xmlcomments: Not used in analysis. Used ONLY to complete the XML
-        file. Station comments. Defaults to 'No comment'.
-    :param xmlunits: Not used in analysis. Used ONLY to complete the XML
-        file. Units of the observed water level. Defaults to 'm'.
-    :param xmldecimalplaces: Not used in analysis. Used ONLY to complete the
-        XML file. Format of the observed amplitude and phase. Default
-        depends on length of analysis record.  'full' is the default and
-        means that full accuracy, 'ihotc' is formatted according to IHOTC
-        standard which severly limits the number of decimal places, and if
-        an integer number lists the number of decimal places.
+    Parameters
+    ----------
+    data_filename : str
+        The time-series of elevations to be analyzed.  Can be a file name
+        that is parsed with a companion definition file or a CSV, WDM,
+        HDF5, or XLSX file.  The options for each file type are listed in
+        "tstoolbox read --help" on the command line or "help(tstoolbox.read)
+        in Python.
+    def_filename : str, optional
+        Contains the definition string to parse the input data.
+    quiet : bool, optional
+        Print nothing to the screen.
+    debug : bool, optional
+        Print debug messages.
+    outputts : bool, optional
+        Output time series for each constituent.
+    ephemeris : bool, optional
+        Print out ephemeris tables.
+    rayleigh : float, optional
+        The Rayleigh coefficient is used to compare against to determine
+        time series length to differentiate between two frequencies.
+        [default: default]
+    missing_data : str, optional
+        What should be done if there is missing data.  One of: fail, ignore,
+        or fill. [default: default]
+    linear_trend : bool, optional
+        Include a linear trend in the least squares fit.
+    remove_extreme : bool, optional
+        Remove values outside of 2 standard deviations before analysis.
+    zero_ts : str, optional
+        Zero the input time series before constituent analysis by subtracting
+        filtered data. One of: transform,usgs,doodson,boxcar
+    filter : str, optional
+        Filter input data set with tide elimination filters. The -o outputts
+        option is implied. Any mix separated by commas and no spaces:
+        transform,usgs,doodson,boxcar
+    pad_filters : str, optional
+        Pad input data set with values to return same size after filtering.
+        Realize edge effects are unavoidable.  One of ["tide", "minimum",
+        "maximum", "mean", "median", "reflect", "wrap"]
+    include_inferred : bool, optional
+        Do not incorporate any inferred constituents into the least squares
+        fit.
+    print_vau_table : bool, optional
+        For debugging - will print a table of V and u values to compare
+        against Schureman.
+    outputxml : str, optional
+        File name to output constituents as IHOTC XML format.
+    xmlname : str, optional
+        Not used in analysis. Used ONLY to complete the XML file. Name of the
+        station supplying the observations. [default: A port in a storm]
+    xmlcountry : str, optional
+        Not used in analysis. Used ONLY to complete the XML file. Name of the
+        country containing the station. Defaults to 'A man without a country'.
+    xmllatitude : float, optional
+        Not used in analysis. Used ONLY to complete the XML file. Latitude of
+        the station. Defaults to 0.0.
+    xmllongitude : float, optional
+        Not used in analysis. Used ONLY to complete the XML file. Longitude of
+        the station. Defaults to 0.0.
+    xmltimezone : str, optional
+        Not used in analysis. Used ONLY to complete the XML file. Time zone of
+        the station. Defaults to '0000'.
+    xmlcomments : str, optional
+        Not used in analysis. Used ONLY to complete the XML file. Station
+        comments. Defaults to 'No comment'.
+    xmlunits : str, optional
+        Not used in analysis. Used ONLY to complete the XML file. Units of the
+        observed water level. Defaults to 'm'.
+    xmldecimalplaces : str, optional
+        Not used in analysis. Used ONLY to complete the XML file. Format of the
+        observed amplitude and phase. Default depends on length of analysis
+        record.  'full' is the default and means that full accuracy, 'ihotc'
+        is formatted according to IHOTC standard which severly limits the
+        number of decimal places, and if an integer number lists the number
+        of decimal places.
     """
     print(
         analysis(
