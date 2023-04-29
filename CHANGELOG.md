@@ -1,3 +1,14 @@
+## 0.10.4 (2023-04-29)
+
+### Fix
+
+- **sparser.py**: getiteritems was deprecated for iter in python 3.9
+- under some conditions it wasn't finding the parsing definition file
+
+### Refactor
+
+- small refactors from black, isort, and ruff
+
 ## 0.10.3 (2023-01-16)
 
 ## 0.10.2 (2023-01-08)

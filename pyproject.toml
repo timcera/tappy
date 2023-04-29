@@ -88,7 +88,7 @@ ignore = [
 
 [tool.commitizen]
 name = "cz_conventional_commits"
-version = "0.10.3"
+version = "0.10.4"
 tag_format = "$version"
 version_files = ["VERSION"]
 update_changelog_on_bump = true
