@@ -35,15 +35,14 @@ EXAMPLES:
 #    with this program; if not, write to the Free Software Foundation, Inc.,
 #    675 Mass Ave, Cambridge, MA 02139, USA.
 """
+import sys
 
-# ===imports======================
 import numpy as np
 
-# ===globals======================
+debug_p = False
 modname = "filter"
 
 
-# ===utilities====================
 def msg(txt):
     """Send message to stdout."""
     sys.stdout.write(txt)
@@ -66,9 +65,6 @@ def fatal(ftn, txt):
 def usage():
     """Prints the docstring."""
     print(__doc__)
-
-
-# ====================================
 
 
 def fft_lowpass(nelevation, low_bound, high_bound):
