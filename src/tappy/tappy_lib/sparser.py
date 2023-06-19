@@ -45,10 +45,8 @@ EXAMPLES:
 
 import datetime
 import getopt
-import os
-
-# ===imports======================
 import sys
+from pathlib import Path
 
 from pyparsing import *
 
@@ -130,8 +128,7 @@ def toString(instring, loc, tokenlist):
 
 def toDatetime(instring, loc, tokenlist):
     """Returns a datetime object."""
-    global _origin
-    global _unit
+    global _origin, _unit
 
     exec(f"rvar = _origin + datetime.timedelta({_unit}={float(tokenlist[0])})")
     return rvar
@@ -149,8 +146,7 @@ def integer(
 ):
     """Appends a skip/integer combination to the parse constructs."""
     lint = Combine(sign + Word(nums, min=minimum, max=maximum, exact=exact))
-    grammar.append(SkipTo(lint))
-    grammar.append(lint.setResultsName(name).setParseAction(parseAct))
+    grammar.extend([SkipTo(lint), lint.setResultsName(name).setParseAction(parseAct)])
 
 
 def positive_integer(name, minimum=1, maximum=0, exact=0):
@@ -185,8 +181,7 @@ def real(
             + Word(nums + decimal_sep)
             + Optional(oneOf("E e D d") + Optional(oneOf("- +")) + Word(nums))
         )
-    grammar.append(SkipTo(lword))
-    grammar.append(lword.setResultsName(name).setParseAction(parseAct))
+    grammar.extend([SkipTo(lword), lword.setResultsName(name).setParseAction(parseAct)])
 
 
 def positive_real(name, minimum=1, maximum=0, exact=0):
@@ -242,8 +237,7 @@ def isoformat_as_datetime(name, parseAct=isotoDate):
         + ":"
         + Word(nums)
     )
-    grammar.append(SkipTo(lword))
-    grammar.append(lword.setResultsName(name).setParseAction(parseAct))
+    grammar.extend([SkipTo(lword), lword.setResultsName(name).setParseAction(parseAct)])
 
 
 def real_as_datetime(
@@ -253,8 +247,7 @@ def real_as_datetime(
     unit="days",
     parseAct=toDatetime,
 ):
-    global _origin
-    global _unit
+    global _origin, _unit
     _origin = origin
     _unit = unit
     real(name, sign=Optional("- +"), parseAct=parseAct)
@@ -270,8 +263,7 @@ def integer_as_datetime(
     unit="days",
     parseAct=toDatetime,
 ):
-    global _origin
-    global _unit
+    global _origin, _unit
     _origin = origin
     _unit = unit
     integer(
@@ -287,15 +279,13 @@ def integer_as_datetime(
 def qstring(name):
     """Parses a quoted (either double or single quotes) string."""
     quoted_string = sglQuotedString | dblQuotedString
-    grammar.append(SkipTo(quoted_string))
-    grammar.append(quoted_string.setResultsName(name))
+    grammar.extend([SkipTo(quoted_string), quoted_string.setResultsName(name)])
 
 
 def delimited_as_string(name):
     """Parses out any delimited group as a string."""
     wrd = Word(alphanums)
-    grammar.append(SkipTo(wrd))
-    grammar.append(wrd.setResultsName(name))
+    grammar.extend([SkipTo(wrd), wrd.setResultsName(name)])
 
 
 def number_as_real(name, sign=Optional(oneOf("- +")), parseAct=toFloat):
@@ -387,7 +377,8 @@ class ParseFileLineByLine:
         definition file is available __init__ will then create some pyparsing
         helper variables."""
 
-        filen, _ = os.path.splitext(filename)
+        filen = Path(filename)
+        def_filename = Path(def_filename)
 
         # I use filelike which allows you to open up compressed files and urls
         # as files.  Test to see whether it is available.
@@ -397,6 +388,7 @@ class ParseFileLineByLine:
             tmp_open = filelike.open
         except ImportError:
             tmp_open = open
+
         self.file = tmp_open(filename, mode)
 
         # Try to maintain a line count
@@ -428,18 +420,18 @@ class ParseFileLineByLine:
 
         self.line_number = 0
 
-        definition_file_one = f"{filen}.def"
-        if os.path.dirname(filen):
-            definition_file_two = f"{os.path.dirname(filen) + os.sep}sparse.def"
+        definition_file_one = filen.with_name(f"{filen.stem}.def")
+        if filen.parent.exists():
+            definition_file_two = filen.with_name("sparse.def")
         else:
             definition_file_two = "sparse.def"
 
-        if os.path.exists(definition_file_two):
+        if definition_file_two.exists():
             self.parsedef = definition_file_two
-        if os.path.exists(definition_file_one):
+        if definition_file_one.exists():
             self.parsedef = definition_file_one
         if def_filename:
-            if os.path.exists(def_filename):
+            if def_filename.exists():
                 self.parsedef = def_filename
             else:
                 raise DefinitionFileNotFoundError(def_filename)
@@ -523,17 +515,17 @@ def main(pargs):
 if __name__ == "__main__":
     ftn = "main"
     opts, pargs = getopt.getopt(
-        sys.argv[1:], "hvd", ["help", "version", "debug", "bb="]
+        sys.argv[1:], "hvd", ("help", "version", "debug", "bb=")
     )
     for opt in opts:
-        if opt[0] in ["-h", "--help"]:
+        if opt[0] in ("-h", "--help"):
             print(f"{modname}: version={__version__}")
             usage()
             sys.exit(0)
-        elif opt[0] in ["-v", "--version"]:
+        elif opt[0] in ("-v", "--version"):
             print(f"{modname}: version={__version__}")
             sys.exit(0)
-        elif opt[0] in ["-d", "--debug"]:
+        elif opt[0] in ("-d", "--debug"):
             debug_p = 1
         elif opt[0] == "--bb":
             opt_b = opt[1]
