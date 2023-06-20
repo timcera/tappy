@@ -1,3 +1,9 @@
+## 1.0.0 (2023-06-20)
+
+### Refactor
+
+- complete refactor to match approach with other toolboxes
+
 ## 0.10.4 (2023-04-29)
 
 ### Fix
