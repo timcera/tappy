@@ -13,10 +13,12 @@ dynamic = ["version", "readme"]
 description = "Command line script and Python library perform tidally-based analysis of water level data."
 requires-python = ">=3.7.1"
 dependencies = [
-    "toolbox_utils >= 5.0.0, < 6.0.0",
     "astronomia",
     "cltoolbox",
-    "numpy"
+    "numpy",
+    "pyparsing",
+    "scipy",
+    "toolbox_utils >= 5.0.0, < 6.0.0"
 ]
 license = {text = "BSD-3-Clause"}
 authors = [
@@ -24,48 +26,48 @@ authors = [
 ]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
-    "Intended Audience :: Science/Research",
-    "Intended Audience :: End Users/Desktop",
-    "Intended Audience :: Developers",
     "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Intended Audience :: End Users/Desktop",
+    "Intended Audience :: Science/Research",
     "License :: OSI Approved :: BSD License",
     "Natural Language :: English",
     "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
-    "Topic :: Scientific/Engineering :: Information Analysis",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3 :: Only",
     "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Information Analysis",
     "Topic :: Software Development :: Libraries :: Python Modules"
 ]
 keywords = [
-    "tidal-analysis",
     "cli-app",
+    "python",
+    "tidal-analysis",
     "tide-analysis",
-    "tide-prediction",
     "tide-filter",
-    "python"
+    "tide-prediction"
 ]
 
 [project.optional-dependencies]
 dev = [
     "black",
+    "blacken-docs",
+    "black-nbconvert",
     "cleanpy",
-    "twine",
-    "pytest",
+    "commitizen",
     "coverage",
     "flake8",
+    "isort",
+    "pre-commit",
+    "pytest",
     "pytest-cov",
     "pytest-mpl",
-    "pre-commit",
-    "black-nbconvert",
-    "blacken-docs",
-    "velin",
-    "isort",
     "pyupgrade",
-    "commitizen"
+    "twine",
+    "velin"
 ]
 
 [project.scripts]
@@ -80,9 +82,9 @@ bitbucket = "https://bitbucket.org/timcera/tappy/src/main/"
 
 [tool.check-manifest]
 ignore = [
-    "docs/_function_autosummary/*",
     ".coverage",
     ".deepsource.toml",
+    "docs/_function_autosummary/*",
     ".ipynb_checkpoints/*"
 ]
 
