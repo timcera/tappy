@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-import difflib
 import glob
 import os
 import re
@@ -10,6 +9,9 @@ import subprocess
 import tempfile
 from pathlib import Path
 from unittest import TestCase
+
+import pandas as pd
+from pandas.testing import assert_frame_equal
 
 # directory dance to find tappy.py module in directory above
 # test_tappy.py
@@ -38,7 +40,6 @@ class TappyTest(TestCase):
                 "--include_inferred",
             ]
         )
-        print(ret)
 
     def tearDown(self):
         os.chdir(self.cwd)
@@ -47,19 +48,9 @@ class TappyTest(TestCase):
     def test_constituents(self):
         os.chdir(self.tmpdir)
         for i in ["M2", "M8"]:
-            alines = open(
-                self.cwd / "tests" / "output_ts" / f"outts_{i}.dat"
-            ).readlines()
-            print(Path.cwd())
-            print(glob.glob("*"))
-            blines = open(Path(f"outts_{i}.dat")).readlines()
-            d = difflib.Differ()
-            result = list(d.compare(alines, blines))
-            result = [i for i in result if i[0] in ["+", "-", "?"]]
-            print(
-                "".join(result),
-            )
-            self.assertEqual(result, [])
+            alines = pd.read_csv(self.cwd / "tests" / "output_ts" / f"outts_{i}.dat")
+            blines = pd.read_csv(Path(f"outts_{i}.dat"))
+            assert_frame_equal(alines, blines)
 
     def test_closure(self):
         os.chdir(self.tmpdir)
@@ -80,10 +71,10 @@ class TappyTest(TestCase):
                 f"tappy analysis predict.out --def_filename {def_filename} --outputxml testoutclosure.xml --include_inferred"
             )
         )
-        print(os.getcwd())
-        print(glob.glob("*"))
-        alines = open("testout.xml").readlines()
-        blines = open("testoutclosure.xml").readlines()
+
+        alines = open("testout.xml", encoding="ascii").readlines()
+        blines = open("testoutclosure.xml", encoding="ascii").readlines()
+
         nalines = []
         for a in alines:
             match = re.search(r"[0-9\.]+", a)
@@ -94,13 +85,8 @@ class TappyTest(TestCase):
             match = re.search(r"[0-9\.]+", b)
             if match is not None:
                 nblines.append(str(round(float(match.group()), 2)))
-        d = difflib.Differ()
-        result = list(d.compare(nalines, nblines))
-        result = [i for i in result if i[0] in ["+", "-", "?"]]
-        print(
-            "".join(result),
-        )
-        self.assertEqual(result, [])
+
+        self.assertEqual(nalines, nblines)
 
 
 if __name__ == "__main__":
