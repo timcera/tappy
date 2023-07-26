@@ -13,7 +13,7 @@ dynamic = ["version", "readme"]
 description = "Command line script and Python library perform tidally-based analysis of water level data."
 requires-python = ">=3.7.1"
 dependencies = [
-    "toolbox_utils >= 3.0.0, < 4.0.0",
+    "toolbox_utils >= 5.0.0, < 6.0.0",
     "astronomia",
     "cltoolbox",
     "numpy"
