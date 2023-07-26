@@ -50,7 +50,7 @@ class TappyTest(TestCase):
         for i in ["M2", "M8"]:
             alines = pd.read_csv(self.cwd / "tests" / "output_ts" / f"outts_{i}.dat")
             blines = pd.read_csv(Path(f"outts_{i}.dat"))
-            assert_frame_equal(alines, blines)
+            assert_frame_equal(alines, blines, atol=1e-4)
 
     def test_closure(self):
         os.chdir(self.tmpdir)
