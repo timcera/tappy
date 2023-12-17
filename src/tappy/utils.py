@@ -367,8 +367,6 @@ class Util:
         """
 
         (zeta, nu, nup, nupp, kap_p, ii, R, Q, T, jd, s, h, Nv, p, p1) = package
-        speed_dict = {}
-
         # Set data into speed_dict depending on length of time series
         # Required length of time series depends on Raleigh criteria to
         # differentiate beteen constituents of simmilar speed.
@@ -379,14 +377,15 @@ class Util:
 
         # TASK has the following constituents
         #  MSN6       87.4238337
-        self.tidal_dict = {}
-
-        self.tidal_dict["M2"] = {
-            "ospeed": 28.984104252 * deg2rad,
-            "VAU": 2 * (T - s + h + zeta - nu),
-            "u": 2 * (zeta - nu),
-            "FF": node_factor_78(ii),
+        self.tidal_dict = {
+            "M2": {
+                "ospeed": 28.984104252 * deg2rad,
+                "VAU": 2 * (T - s + h + zeta - nu),
+                "u": 2 * (zeta - nu),
+                "FF": node_factor_78(ii),
+            }
         }
+
         self.tidal_dict["K1"] = {
             "ospeed": 15.041068632 * deg2rad,
             "VAU": T + h - 90 * deg2rad - nup,
@@ -841,7 +840,7 @@ class Util:
         if num_hours < 13:
             print("Cannot calculate any constituents from this record length")
             sys.exit()
-        speed_dict["M2"] = self.tidal_dict["M2"]
+        speed_dict = {"M2": self.tidal_dict["M2"]}
         if num_hours >= (24 * rayleigh_comp):
             speed_dict["K1"] = self.tidal_dict["K1"]
         if num_hours >= 25 * rayleigh_comp:
@@ -966,12 +965,6 @@ class Util:
             speed_dict["R2"] = self.tidal_dict["R2"]
             speed_dict["pi1"] = self.tidal_dict["pi1"]
             speed_dict["psi1"] = self.tidal_dict["psi1"]
-        #            speed_dict["H1"] =self.tidal_dict["H1"]
-        #            speed_dict["H2"] =self.tidal_dict["H2"]
-        if num_hours >= 11326 * rayleigh_comp:
-            # GAM2 from Foreman should go here, but couldn't find comparable
-            # constituent information from Schureman
-            pass
         # This is what is required to separate NO1 and M1
         if num_hours >= 77554 * rayleigh_comp:
             speed_dict["M1"] = self.tidal_dict["M1"]
@@ -1082,10 +1075,9 @@ class Tappy(Util):
 
         interval = dates[1:] - dates[:-1]
 
-        if np.any(interval > datetime.timedelta(seconds=3600)):
-            if task == "fail":
-                print("There is a difference of greater than one hour between values")
-                sys.exit()
+        if np.any(interval > datetime.timedelta(seconds=3600)) and task == "fail":
+            print("There is a difference of greater than one hour between values")
+            sys.exit()
 
         if task == "fill":
             # Create real dates
@@ -1182,11 +1174,7 @@ class Tappy(Util):
         if len(self.speed_dict[key_list[0]]["FF"]) == len(t):
             ff = self.tidal_dict
         else:
-            # This is for the short term harmonic analysis.
-            ff = {}
-            for key in key_list:
-                ff[key] = {"FF": np.ones(len(t))}
-
+            ff = {key: {"FF": np.ones(len(t))} for key in key_list}
         self.inferred_key_list = []
         self.inferred_r = {}
         self.inferred_phase = {}
@@ -1384,7 +1372,7 @@ class Tappy(Util):
         if self.pad_filters == "tide":
             tnelevation = np.concatenate(
                 (
-                    np.array([np.average(nelevation[0:half_kern])]),
+                    np.array([np.average(nelevation[:half_kern])]),
                     nelevation,
                     np.array([np.average(nelevation[-half_kern:])]),
                 )
@@ -1800,10 +1788,7 @@ class Tappy(Util):
 
     def print_con(self):
         """Print out the constituents."""
-        ndict = {}
-        for k in self.key_list:
-            ndict[k] = self.speed_dict[k]["speed"]
-
+        ndict = {k: self.speed_dict[k]["speed"] for k in self.key_list}
         print("\n#%12s %12s %12s %12s" % ("NAME", "SPEED", "H", "PHASE"))
         print("#%12s %12s %12s %12s" % ("====", "=====", "=", "====="))
         klist = [i[0] for i in self.sortbyvalue(ndict)]
@@ -1813,9 +1798,7 @@ class Tappy(Util):
                 % (i, self.speed_dict[i]["speed"] * rad2deg, self.r[i], self.phase[i])
             )
         print("\n# INFERRED CONSTITUENTS")
-        ndict = {}
-        for k in self.inferred_key_list:
-            ndict[k] = self.tidal_dict[k]["speed"]
+        ndict = {k: self.tidal_dict[k]["speed"] for k in self.inferred_key_list}
         print("#%12s %12s %12s %12s" % ("NAME", "SPEED", "H", "PHASE"))
         print("#%12s %12s %12s %12s" % ("====", "=====", "=", "====="))
         klist = [i[0] for i in self.sortbyvalue(ndict)]
@@ -2001,9 +1984,7 @@ class Tappy(Util):
             include_inferred=True,
         )
         t.dates = []
-        for d in range(1851, 2001):
-            t.dates.append(datetime.datetime(d, 1, 1, 0, 0))
-
+        t.dates.extend(datetime.datetime(d, 1, 1, 0, 0) for d in range(1851, 2001))
         package = self.astronomic(t.dates)
         (zeta, nu, nup, nupp, kap_p, ii, R, Q, T, self.jd, s, h, Nv, p, p1) = package
         (speed_dict, key_list) = self.which_constituents(len(t.dates), package)
