@@ -137,8 +137,7 @@ def toDatetime(instring, loc, tokenlist):
 def isotoDate(instring, loc, tokenlist):
     """Returns a datetime object."""
     rvar = [int(i) for i in tokenlist[::2]]
-    rvar = datetime.datetime(*rvar)
-    return rvar
+    return datetime.datetime(*rvar)
 
 
 def integer(
@@ -445,10 +444,10 @@ class ParseFileLineByLine:
 
     def __getitem__(self, item):
         """Used in 'for line in fp:' idiom."""
-        iline = self.readline()
-        if not iline:
+        if iline := self.readline():
+            return iline
+        else:
             raise IndexError
-        return iline
 
     def readline(self):
         """Reads (and optionally parses) a single line."""
@@ -473,10 +472,10 @@ class ParseFileLineByLine:
             # self.file.readlines() so that there wasn't two copies of the file
             # in memory.
             while 1:
-                iline = self.readline()
-                if not iline:
+                if iline := self.readline():
+                    tot.append(iline)
+                else:
                     break
-                tot.append(iline)
             return tot
         return self.file.readlines()
 

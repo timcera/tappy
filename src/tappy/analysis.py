@@ -208,10 +208,7 @@ def analysis(
         x.p1,
     ) = package
 
-    if rayleigh:
-        ray = float(rayleigh)
-    else:
-        ray = 1.0
+    ray = float(rayleigh) if rayleigh else 1.0
     (x.speed_dict, x.key_list) = x.which_constituents(
         len(x.dates), package, rayleigh_comp=ray
     )
