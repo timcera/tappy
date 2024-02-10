@@ -48,10 +48,11 @@ import astronomia.calendar as cal
 import numpy as np
 from numpy import pad
 from scipy.optimize import leastsq
-from toolbox_utils import tsutils
 
 from tappy.tappy_lib import sparser
 from tappy.tappy_lib.parameter_database import _master_speed_dict, letter_to_factor_map
+
+from .toolbox_utils.src.toolbox_utils import tsutils
 
 modname = "tappy"
 
@@ -1084,7 +1085,7 @@ class Tappy(Util):
             dates[0]
             # Dominant interval
             interval = sorted(interval)
-            interval = interval[len(interval) / 2]
+            interval = interval[len(interval) // 2]
 
             dt = dates[0]
             dates_filled = []
@@ -1354,7 +1355,7 @@ class Tappy(Util):
         """Pad the dates array with dates before and after the data."""
         interval = dates[1:] - dates[:-1]
         interval = sorted(interval)
-        interval = interval[len(interval) / 2]
+        interval = interval[len(interval) // 2]
         cnt = np.arange(1, len_dates + 1) * datetime.timedelta(
             minutes=interval.seconds / 60
         )
@@ -1379,7 +1380,7 @@ class Tappy(Util):
             )
             interval = ndates[1:] - ndates[:-1]
             interval = sorted(interval)
-            interval = interval[len(interval) / 2]
+            interval = interval[len(interval) // 2]
             deltat = datetime.timedelta(minutes=interval.seconds / 60)
             tndates = np.concatenate(
                 (
