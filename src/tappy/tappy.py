@@ -44,10 +44,10 @@ import sys
 from pathlib import Path
 
 import numpy as np
-from toolbox_utils import tsutils
 
 from .analysis import analysis
 from .prediction import prediction
+from .toolbox_utils.src.toolbox_utils import tsutils
 
 # ===globals======================
 modname = "tappy"
