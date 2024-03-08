@@ -749,13 +749,13 @@ class Util:
         self.tidal_dict["pi1"] = {
             "ospeed": 14.9178647 * deg2rad,
             "VAU": T - 2 * h + p1 + 90 * deg2rad,
-            "FF": np.ones(length)
+            "FF": np.ones(length),
             #'pi1': [1, 'AAWZZAY', [1, 1, -3, 0, 0, 1, -1]],
         }
         self.tidal_dict["psi1"] = {
             "ospeed": 15.0821352 * deg2rad,
             "VAU": T + 2 * h - p1 - 90 * deg2rad,
-            "FF": np.ones(length)
+            "FF": np.ones(length),
             #'psi1': [1, 'AAAZZYA', [1, 1, 1, 0, 0, -1, 1]],
         }
 
