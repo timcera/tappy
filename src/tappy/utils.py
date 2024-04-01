@@ -41,18 +41,23 @@ EXAMPLES:
 """
 import datetime
 import operator
+import os
 import sys
 from pathlib import Path
 
-import astronomia.calendar as cal
 import numpy as np
 from numpy import pad
 from scipy.optimize import leastsq
+from skyfield import api
 
 from tappy.tappy_lib import sparser
 from tappy.tappy_lib.parameter_database import _master_speed_dict, letter_to_factor_map
 
 from .toolbox_utils.src.toolbox_utils import tsutils
+
+ts = api.load.timescale()
+ephemeris_dir = os.path.join(os.path.dirname(__file__), "ephemeris_files")
+eph = api.Loader(ephemeris_dir)("de440.bsp")
 
 modname = "tappy"
 
@@ -259,8 +264,7 @@ class Util:
 
         if isinstance(dates[0], datetime.datetime):
             jd = [
-                cal.cal_to_jd(i.year, i.month, i.day)
-                + cal.hms_to_fday(i.hour, i.minute, i.second)
+                ts.tt(i.year, i.month, i.day, i.hour, i.minute, i.second).tt
                 for i in dates
             ]
             jd = np.array(jd).flatten()
