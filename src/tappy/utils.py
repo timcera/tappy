@@ -56,8 +56,8 @@ from tappy.tappy_lib.parameter_database import _master_speed_dict, letter_to_fac
 from .toolbox_utils.src.toolbox_utils import tsutils
 
 ts = api.load.timescale()
-ephemeris_dir = os.path.join(os.path.dirname(__file__), "ephemeris_files")
-eph = api.Loader(ephemeris_dir)("de440.bsp")
+# ephemeris_dir = os.path.join(os.path.dirname(__file__), "ephemeris_files")
+# eph = api.Loader(ephemeris_dir)("de440.bsp")
 
 modname = "tappy"
 
