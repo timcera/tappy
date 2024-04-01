@@ -17,7 +17,8 @@ dependencies = [
     "cltoolbox",
     "numpy",
     "pyparsing",
-    "scipy"
+    "scipy",
+    "skyfield"
 ]
 license = {text = "BSD-3-Clause"}
 authors = [
@@ -96,6 +97,9 @@ update_changelog_on_bump = true
 
 [tool.isort]
 profile = "black"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
 
 [tool.setuptools]
 license-files = ["LICENSE.txt"]
