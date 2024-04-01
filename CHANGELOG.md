@@ -1,3 +1,13 @@
+## 1.1.0 (2024-03-31)
+
+### Refactor
+
+- begin of refactore of tidal filters
+
+### Feat
+
+- begin using skyfield
+
 ## 1.0.5 (2023-12-16)
 
 ### Refactor
