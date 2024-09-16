@@ -42,7 +42,6 @@ EXAMPLES:
 
 import datetime
 import operator
-import os
 import sys
 from pathlib import Path
 
@@ -1477,7 +1476,7 @@ class Tappy(Util):
                 3) cosine-Lanczos squared filter
                 4) cosine-Lanczos filter
             """
-            import filter
+            from . import filter
 
             return dates_filled, filter.fft_lowpass(nelevation, 1 / 30.0, 1 / 40.0)
 
