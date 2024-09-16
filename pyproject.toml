@@ -2,8 +2,7 @@
 requires = [
     "setuptools>=45",
     "setuptools_scm[toml]>=6.2",
-    "wheel",
-    "oldest-supported-numpy"
+    "wheel"
 ]
 build-backend = "setuptools.build_meta"
 
@@ -51,25 +50,6 @@ keywords = [
     "tide-prediction"
 ]
 
-[project.optional-dependencies]
-dev = [
-    "black",
-    "blacken-docs",
-    "black-nbconvert",
-    "cleanpy",
-    "commitizen",
-    "coverage",
-    "flake8",
-    "isort",
-    "pre-commit",
-    "pytest",
-    "pytest-cov",
-    "pytest-mpl",
-    "pyupgrade",
-    "twine",
-    "velin"
-]
-
 [project.scripts]
 tappy = "tappy.tappy:main"
 
@@ -79,14 +59,6 @@ github = "https://github.com/timcera/tappy"
 bitbucket = "https://bitbucket.org/timcera/tappy/src/main/"
 
 [tool]
-
-[tool.check-manifest]
-ignore = [
-    ".coverage",
-    ".deepsource.toml",
-    "docs/_function_autosummary/*",
-    ".ipynb_checkpoints/*"
-]
 
 [tool.commitizen]
 name = "cz_conventional_commits"
@@ -111,6 +83,5 @@ version = {file = "VERSION"}
 
 [tool.setuptools.packages.find]
 where = ["src"]
-exclude = ["tests*", "examples*", "tools*", "docs*", "tappy.tests*"]
 
 [tool.setuptools_scm]
