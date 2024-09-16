@@ -1,3 +1,14 @@
+## 1.2.0 (2024-09-16)
+
+### Fix
+
+- fixed imports and move to toolbox_utils as git submodule
+- for the time-being get rid of ephemeris file because of size
+
+### Feat
+
+- begin using skyfield
+
 ## 1.1.0 (2024-03-31)
 
 ### Refactor
