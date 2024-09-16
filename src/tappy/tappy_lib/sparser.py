@@ -48,7 +48,7 @@ import getopt
 import sys
 from pathlib import Path
 
-from pyparsing import *
+import pyparsing
 
 # ===globals======================
 modname = "sparser"
@@ -130,6 +130,7 @@ def toDatetime(instring, loc, tokenlist):
     """Returns a datetime object."""
     global _origin, _unit
 
+    rvar = _origin
     exec(f"rvar = _origin + datetime.timedelta({_unit}={float(tokenlist[0])})")
     return rvar
 
@@ -141,16 +142,31 @@ def isotoDate(instring, loc, tokenlist):
 
 
 def integer(
-    name, minimum=1, maximum=0, exact=0, sign=Optional(oneOf("- +")), parseAct=toInteger
+    name,
+    minimum=1,
+    maximum=0,
+    exact=0,
+    sign=pyparsing.Optional(pyparsing.oneOf("- +")),
+    parseAct=toInteger,
 ):
     """Appends a skip/integer combination to the parse constructs."""
-    lint = Combine(sign + Word(nums, min=minimum, max=maximum, exact=exact))
-    grammar.extend([SkipTo(lint), lint.setResultsName(name).setParseAction(parseAct)])
+    lint = pyparsing.Combine(
+        sign + pyparsing.Word(pyparsing.nums, min=minimum, max=maximum, exact=exact)
+    )
+    grammar.extend(
+        [pyparsing.SkipTo(lint), lint.setResultsName(name).setParseAction(parseAct)]
+    )
 
 
 def positive_integer(name, minimum=1, maximum=0, exact=0):
     """Will only parse a positive integer."""
-    integer(name, minimum=minimum, maximum=maximum, exact=exact, sign=Optional("+"))
+    integer(
+        name,
+        minimum=minimum,
+        maximum=maximum,
+        exact=exact,
+        sign=pyparsing.Optional("+"),
+    )
 
 
 def negative_integer(name, minimum=1, maximum=0, exact=0):
@@ -161,7 +177,7 @@ def negative_integer(name, minimum=1, maximum=0, exact=0):
 def real(
     name,
     required_decimal=True,
-    sign=Optional(oneOf("- +")),
+    sign=pyparsing.Optional(pyparsing.oneOf("- +")),
     parseAct=toFloat,
     minimum=1,
     maximum=0,
@@ -169,23 +185,39 @@ def real(
 ):
     """Appends a skip/real pair to the parse constructs."""
     if required_decimal:
-        lword = Combine(
+        lword = pyparsing.Combine(
             sign
-            + Regex(r"[0-9]*\.[0-9]*")
-            + Optional(oneOf("E e D d") + Optional(oneOf("- +")) + Word(nums))
+            + pyparsing.Regex(r"[0-9]*\.[0-9]*")
+            + pyparsing.Optional(
+                pyparsing.oneOf("E e D d")
+                + pyparsing.Optional(pyparsing.oneOf("- +"))
+                + pyparsing.Word(pyparsing.nums)
+            )
         )
     else:
-        lword = Combine(
+        lword = pyparsing.Combine(
             sign
-            + Word(nums + decimal_sep)
-            + Optional(oneOf("E e D d") + Optional(oneOf("- +")) + Word(nums))
+            + pyparsing.Word(pyparsing.nums + decimal_sep)
+            + pyparsing.Optional(
+                pyparsing.oneOf("E e D d")
+                + pyparsing.Optional(pyparsing.oneOf("- +"))
+                + pyparsing.Word(pyparsing.nums)
+            )
         )
-    grammar.extend([SkipTo(lword), lword.setResultsName(name).setParseAction(parseAct)])
+    grammar.extend(
+        [pyparsing.SkipTo(lword), lword.setResultsName(name).setParseAction(parseAct)]
+    )
 
 
 def positive_real(name, minimum=1, maximum=0, exact=0):
     """Will only parse a positive real."""
-    real(name, minimum=minimum, maximum=maximum, exact=exact, sign=Optional("+"))
+    real(
+        name,
+        minimum=minimum,
+        maximum=maximum,
+        exact=exact,
+        sign=pyparsing.Optional("+"),
+    )
 
 
 def negative_real(name, minimum=1, maximum=0, exact=0):
@@ -194,7 +226,12 @@ def negative_real(name, minimum=1, maximum=0, exact=0):
 
 
 def real_as_string(
-    name, minimum=1, maximum=0, exact=0, sign=Optional(oneOf("- +")), parseAct=toString
+    name,
+    minimum=1,
+    maximum=0,
+    exact=0,
+    sign=pyparsing.Optional(pyparsing.oneOf("- +")),
+    parseAct=toString,
 ):
     """Parses a real number, but returns it as a string."""
     real(
@@ -208,7 +245,12 @@ def real_as_string(
 
 
 def integer_as_string(
-    name, minimum=1, maximum=0, exact=0, sign=Optional(oneOf("- +")), parseAct=toString
+    name,
+    minimum=1,
+    maximum=0,
+    exact=0,
+    sign=pyparsing.Optional(pyparsing.oneOf("- +")),
+    parseAct=toString,
 ):
     """Parses an integer, but returns it as a string."""
     integer(
@@ -224,24 +266,26 @@ def integer_as_string(
 def isoformat_as_datetime(name, parseAct=isotoDate):
     """Appends a skip/real pair to the parse constructs."""
     lword = (
-        Word(nums)
+        pyparsing.Word(pyparsing.nums)
         + "-"
-        + Word(nums)
+        + pyparsing.Word(pyparsing.nums)
         + "-"
-        + Word(nums)
-        + oneOf("T  ")
-        + Word(nums)
+        + pyparsing.Word(pyparsing.nums)
+        + pyparsing.oneOf("T  ")
+        + pyparsing.Word(pyparsing.nums)
         + ":"
-        + Word(nums)
+        + pyparsing.Word(pyparsing.nums)
         + ":"
-        + Word(nums)
+        + pyparsing.Word(pyparsing.nums)
     )
-    grammar.extend([SkipTo(lword), lword.setResultsName(name).setParseAction(parseAct)])
+    grammar.extend(
+        [pyparsing.SkipTo(lword), lword.setResultsName(name).setParseAction(parseAct)]
+    )
 
 
 def real_as_datetime(
     name,
-    sign=Optional(oneOf("- +")),
+    sign=pyparsing.Optional(pyparsing.oneOf("- +")),
     origin=datetime.datetime(1900, 1, 1),
     unit="days",
     parseAct=toDatetime,
@@ -249,7 +293,7 @@ def real_as_datetime(
     global _origin, _unit
     _origin = origin
     _unit = unit
-    real(name, sign=Optional("- +"), parseAct=parseAct)
+    real(name, sign=pyparsing.Optional("- +"), parseAct=parseAct)
 
 
 def integer_as_datetime(
@@ -257,7 +301,7 @@ def integer_as_datetime(
     minimum=1,
     maximum=0,
     exact=0,
-    sign=Optional(oneOf("- +")),
+    sign=pyparsing.Optional(pyparsing.oneOf("- +")),
     origin=datetime.datetime(1900, 1, 1),
     unit="days",
     parseAct=toDatetime,
@@ -277,23 +321,37 @@ def integer_as_datetime(
 
 def qstring(name):
     """Parses a quoted (either double or single quotes) string."""
-    quoted_string = sglQuotedString | dblQuotedString
-    grammar.extend([SkipTo(quoted_string), quoted_string.setResultsName(name)])
+    quoted_string = pyparsing.sglQuotedString | pyparsing.dblQuotedString
+    grammar.extend(
+        [pyparsing.SkipTo(quoted_string), quoted_string.setResultsName(name)]
+    )
 
 
 def delimited_as_string(name):
     """Parses out any delimited group as a string."""
-    wrd = Word(alphanums)
-    grammar.extend([SkipTo(wrd), wrd.setResultsName(name)])
+    wrd = pyparsing.Word(pyparsing.alphanums)
+    grammar.extend([pyparsing.SkipTo(wrd), wrd.setResultsName(name)])
 
 
-def number_as_real(name, sign=Optional(oneOf("- +")), parseAct=toFloat):
+def number_as_real(
+    name, sign=pyparsing.Optional(pyparsing.oneOf("- +")), parseAct=toFloat
+):
     """Parses any number as a real."""
-    real(name, required_decimal=False, sign=Optional(oneOf("- +")), parseAct=toFloat)
+    real(
+        name,
+        required_decimal=False,
+        sign=pyparsing.Optional(pyparsing.oneOf("- +")),
+        parseAct=toFloat,
+    )
 
 
 def number_as_integer(
-    name, minimum=1, maximum=0, exact=0, sign=Optional(oneOf("- +")), parseAct=toInteger
+    name,
+    minimum=1,
+    maximum=0,
+    exact=0,
+    sign=pyparsing.Optional(pyparsing.oneOf("- +")),
+    parseAct=toInteger,
 ):
     """Parses any number as a integer."""
     integer(
@@ -311,7 +369,7 @@ def number_as_string(
     minimum=1,
     maximum=None,
     exact=0,
-    sign=Optional(oneOf("- +")),
+    sign=pyparsing.Optional(pyparsing.oneOf("- +")),
     parseAct=toString,
 ):
     """Parses any number as a string."""
@@ -436,7 +494,7 @@ class ParseFileLineByLine:
                 raise DefinitionFileNotFoundError(def_filename)
         if self.parsedef:
             exec(open(self.parsedef).read())
-            self.grammar = And(grammar[1:] + [restOfLine])
+            self.grammar = pyparsing.And(grammar[1:] + [pyparsing.restOfLine])
 
     def __del__(self):
         """Delete (close) the file wrapper."""
@@ -446,8 +504,7 @@ class ParseFileLineByLine:
         """Used in 'for line in fp:' idiom."""
         if iline := self.readline():
             return iline
-        else:
-            raise IndexError
+        raise IndexError
 
     def readline(self):
         """Reads (and optionally parses) a single line."""
@@ -460,7 +517,7 @@ class ParseFileLineByLine:
                 iline.parsed_dict = self.grammar.parseString(iline).asDict()
                 for key, val in extra_dict.items():
                     iline.parsed_dict[key] = val
-            except ParseException:
+            except pyparsing.ParseException:
                 iline.parsed_dict = {}
         return iline
 

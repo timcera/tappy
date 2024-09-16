@@ -1,3 +1,5 @@
+import math as m
+
 letter_to_factor_map = {
     "Z": 0,
     "Y": -1,
@@ -21,9 +23,6 @@ letter_to_factor_map = {
     "M": 13,
     "N": 14,
 }
-
-
-import math as m
 
 
 def _m1b(p, N):

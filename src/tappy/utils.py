@@ -39,9 +39,9 @@ EXAMPLES:
 
 
 """
+
 import datetime
 import operator
-import os
 import sys
 from pathlib import Path
 
@@ -1708,9 +1708,9 @@ class Tappy(Util):
             p0[-2] = 0.0
             new_dates = np.concatenate(
                 (
-                    [ndates[0] - datetime.timedelta(hours=blen)],
-                    ndates,
-                    [ndates[-1] + datetime.timedelta(hours=blen)],
+                    [dates_filled[0] - datetime.timedelta(hours=blen)],
+                    dates_filled,
+                    [dates_filled[-1] + datetime.timedelta(hours=blen)],
                 )
             )
             new_elevation = np.concatenate(

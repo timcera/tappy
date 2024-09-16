@@ -7,8 +7,8 @@ import shlex
 import shutil
 import subprocess
 import tempfile
+import unittest
 from pathlib import Path
-from unittest import TestCase
 
 import pandas as pd
 from pandas.testing import assert_frame_equal
@@ -19,7 +19,7 @@ file_loc = Path(__file__).resolve()
 cur_path = file_loc.parent
 
 
-class TappyTest(TestCase):
+class TappyTest(unittest.TestCase):
     def setUp(self):
         self.cwd = Path.cwd()
         self.tmpdir = tempfile.mkdtemp()
@@ -28,7 +28,7 @@ class TappyTest(TestCase):
         for files in ["*.dat", "*.xml"]:
             for f in glob.glob(files):
                 os.remove(f)
-        ret = subprocess.call(
+        _ = subprocess.call(
             [
                 "tappy",
                 "analysis",

@@ -39,6 +39,7 @@ EXAMPLES:
 
 
 """
+
 import datetime
 
 import numpy as np
