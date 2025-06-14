@@ -1,199 +1,131 @@
-Typically the node factor from the middle of the time series is used for
-tidal analysis. This is fine for relatively short time series. TAPPy
-actually calculates the node factor for each point in the time series
-and is therefore suited to long time series. TAPPy will also only report
-the tidal constituents that can be resolved based on the length of the
-input time series.
-
-[TOC]
+Typically the node factor from the middle of the time series is used for tidal
+analysis. This is fine for relatively short time series. TAPPy actually
+calculates the node factor for each point in the time series and is therefore
+suited to long time series. TAPPy will also only report the tidal constituents
+that can be resolved based on the length of the input time series.
 
 Input Data
 ----------
-
-The input data can be in almost any text form as long as each line has
-either (‘year’, ‘month’, ‘day’, ‘hour’, optional[‘minute’, ‘second’]) OR
-a single real or integer number representing time since an origin, and
-‘water elevation’. Time can be to any standard, though UTC is preferred.
-TAPPy will maintain the input time throughout the analysis, but the only
-way to calculate phases to compare against other tidal constituents is
-to use UTC. The units for the water elevation can be anything and the
-output amplitude will be in the input units.
+The input data can be in almost any text form as long as each line has either
+(‘year’, ‘month’, ‘day’, ‘hour’, optional[‘minute’, ‘second’]) OR a single real
+or integer number representing time since an origin, and ‘water elevation’.
+Time can be to any standard, though UTC is preferred. TAPPy will maintain the
+input time throughout the analysis, but the only way to calculate phases to
+compare against other tidal constituents is to use UTC. The units for the water
+elevation can be anything and the output amplitude will be in the input units.
 
 Definition File
 ---------------
-
-The glue that binds the input format to TAPPy is a definition file. It
-is easy to understand and implement. Basically it tells TAPPy how to
-parse the input data file. Delimiters and white space are ignored,
-actually anything in the way of TAPPy finding the next value is ignored.
+The glue that binds the input format to TAPPy is a definition file. It is easy
+to understand and implement. Basically it tells TAPPy how to parse the input
+data file. Delimiters and white space are ignored, actually anything in the way
+of TAPPy finding the next value is ignored.
 
 The definition file is a Python file (though with a .def extension) that
-specifies the order that values can be found on each line. Two variables
-are set within the definition file, ‘decimal_sep’ and ‘parse’. The
-‘decimal_sep’ is set to the separator that marks the decimal part of a
-real number. In most of Europe this would be a “,” whereas for the
-United States it is a “.”. The ‘parse’ variable is where the magic
-happens. It is an ordered list of Python functions that retrieve and
-name values from each line in the order specified. TAPPy requires the
-following named values; ‘water_level’, and either ‘datetime’ or the
-group of (‘year’, ‘month’, ‘day’, ‘hour’, ‘minute’, ‘second’). If the
-later selection to define the time stamp is used and ‘minute’ and
-‘second’ are not specified they are both set to zero. All other names
-(like ‘state’ and ‘station’ in the example below) are parsed, but
-ignored by TAPPy.
+specifies the order that values can be found on each line. Two variables are
+set within the definition file, ‘decimal_sep’ and ‘parse’. The ‘decimal_sep’ is
+set to the separator that marks the decimal part of a real number. In most of
+Europe this would be a “,” whereas for the United States it is a “.”. The
+‘parse’ variable is where the magic happens. It is an ordered list of Python
+functions that retrieve and name values from each line in the order specified.
+TAPPy requires the following named values; ‘water_level’, and either ‘datetime’
+or the group of (‘year’, ‘month’, ‘day’, ‘hour’, ‘minute’, ‘second’). If the
+later selection to define the time stamp is used and ‘minute’ and ‘second’ are
+not specified they are both set to zero. All other names (like ‘state’ and
+‘station’ in the example below) are parsed, but ignored by TAPPy.
 
 Example Definition File
 ~~~~~~~~~~~~~~~~~~~~~~~
+You need to specify the separator between the integer part and the decimal part
+of real numbers, even if you only have integers in your data file.
 
-.. raw:: html
+`Example data for Trident Pier, Florida, USA from
+COOPS. <https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=water_level&application=NOS.COOPS.TAC.WL&begin_date=20061109&end_date=20061201&datum=NAVD&station=8721604&time_zone=GMT&units=english &format=csv>`_
+::
 
-   <table>
+    Date Time, Water Level, Sigma, O or I (for verified), F, R, L, Quality
+    2006-11-09 00:00,-0.791,0.026,0,0,0,0,v
+    2006-11-09 00:06,-0.705,0.026,0,0,0,0,v
+    2006-11-09 00:12,-0.646,0.033,0,0,0,0,v
+    2006-11-09 00:18,-0.607,0.039,0,0,0,0,v
+    2006-11-09 00:24,-0.469,0.026,0,0,0,0,v
+    2006-11-09 00:30,-0.446,0.023,0,0,0,0,v
+    2006-11-09 00:36,-0.295,0.033,0,0,0,0,v
+    2006-11-09 00:42,-0.292,0.023,0,0,0,0,v
+    2006-11-09 00:48,-0.249,0.023,0,0,0,0,v
+    ...
 
-.. raw:: html
+Definition file for the above data file. ::
 
-   <tr>
-
-.. raw:: html
-
-   <th>
-
-Definition File
-
-.. raw:: html
-
-   </th>
-
-.. raw:: html
-
-   <th>
-
-Matching Data File
-
-.. raw:: html
-
-   </th>
-
-.. raw:: html
-
-   </tr>
-
-.. raw:: html
-
-   <tr>
-
-.. raw:: html
-
-   <td>
-
-You need to specify the separator between
-=========================================
-
-the integer part and the decimal
-================================
-
-part of real numbers, even if you only
-======================================
-
-have integers in your data file.
-================================
-
-decimal_sep = “.” # TAPPy needs the variables ‘year’, ‘month’, # ‘day’,
-‘hour’, ‘minute’, ‘water_level’. # Any other variable name can be used
-as a # placeholder. parse = [ integer(‘state’, exact=3),
-integer_as_string(‘station’, exact=4), positive_integer(‘year’,
-exact=4), positive_integer(‘month’, exact=2), positive_integer(‘day’,
-exact=2), positive_integer(‘hour’), positive_integer(‘minute’),
-positive_integer(‘toss’), real(‘water_level’), ]
-
-.. raw:: html
-
-   </td>
-
-.. raw:: html
-
-   <td>
-
-Station Date Time Pred 6 Vrfy 6 DCP#: 1 Units: Feet Feet Data%: MLLW GMT
-100.00 100.00 Maximum: 5.00 Minimum: -0.91 "“——- ——– —– ——- ——-”"
-8721604 20061109 00:00 2.03 2.23 8721604 20061109 00:06 2.11 2.32
-8721604 20061109 00:12 2.19 2.38 8721604 20061109 00:18 2.28 2.41
-8721604 20061109 00:24 2.36 2.55 …
-
-.. raw:: html
-
-   </td>
-
-.. raw:: html
-
-   </tr>
-
-.. raw:: html
-
-   </table>
-
-The example definition file above would correctly parse the data format
-used by COOPS. `Example data for Trident Pier, Florida, USA from
-COOPS. <http://tidesandcurrents.noaa.gov/data_menu.shtml?bdate=20061109&bdate_Month=10&edate=20061210&edate_Month=11&wl_sensor_hist=W1&relative=&datum=6&unit=1&shift=g&stn=8721604+Trident+Pier%2C+FL&type=Historic+Tide+Data&format=View+Data>`__
+    +----------------------------------------------+--------------+
+    | Definition File for Data File Above          | First Record |
+    +==============================================+==============+
+    | decimal_sep = "."                            |              |
+    | # TAPPy needs the variables 'year', 'month', |              |
+    | # 'day', 'hour', 'minute', 'water_level'.    |              |
+    | # Any other variable name can be used as a   |              |
+    | # placeholder.                               |              |
+    | parse = [                                    |              |
+    |     positive_integer('year', exact=4),       | 2006         |
+    |     string('toss1', exact=1),                | -            |
+    |     positive_integer('month', exact=2),      | 11           |
+    |     string('toss2', exact=1),                | -            |
+    |     positive_integer('day', exact=2),        | 09           |
+    |     positive_integer('hour'),                | 00           |
+    |     positive_integer('minute'),              | 00           |
+    |     real('water_level'),                     | -0.791       |
+    | ]                                            |              |
+    +----------------------------------------------+--------------+
 
 List of functions that can appear in the definition file.
 
-+----------------------------------------------------+-----------------+
-| Function name                                      | Find the next … |
-+====================================================+=================+
-| integer(name, minimum=1, maximum=None, exact=None) | integer         |
-+----------------------------------------------------+-----------------+
-| positive_integer(name, minimum=1, maximum=None,    | positive        |
-| exact=None)                                        | integer (‘+’ is |
-|                                                    | optional)       |
-+----------------------------------------------------+-----------------+
-| negative_integer(name, minimum=1, maximum=None,    | negative        |
-| exact=None)                                        | integer         |
-+----------------------------------------------------+-----------------+
-| real(name)                                         | real            |
-+----------------------------------------------------+-----------------+
-| real_as_datetime(‘datetime’,                       | indexed time,   |
-| origin=datetime.datetime(1900,1,1), unit=‘days’)   | (days since… or |
-|                                                    | hours since…)   |
-|                                                    | origin and unit |
-|                                                    | have to be      |
-|                                                    | compatible with |
-|                                                    | Python          |
-|                                                    | datetime. The   |
-|                                                    | name will       |
-|                                                    | always be       |
-|                                                    | ‘datetime’.     |
-+----------------------------------------------------+-----------------+
-| integer_as_datetime(‘datetime’, minimum=1,         | indexed time    |
-| maximum=None, exact=None,                          | (days since… or |
-| origin=datetime.datetime(1900,1,1), unit=‘days’)   | hours since…),  |
-|                                                    | origin and unit |
-|                                                    | have to be      |
-|                                                    | compatible with |
-|                                                    | Python          |
-|                                                    | datetime. The   |
-|                                                    | name will       |
-|                                                    | always be       |
-|                                                    | ‘datetime’.     |
-+----------------------------------------------------+-----------------+
-| positive_real(name)                                | positive real   |
-|                                                    | (‘+’ is         |
-|                                                    | optional)       |
-+----------------------------------------------------+-----------------+
-| negative_real(name)                                | negative real   |
-+----------------------------------------------------+-----------------+
-| number(name)                                       | an integer or a |
-|                                                    | real            |
-+----------------------------------------------------+-----------------+
-| number_as_real(name)                               | an integer or a |
-|                                                    | real, converted |
-|                                                    | to a real using |
-|                                                    | float()         |
-+----------------------------------------------------+-----------------+
-| number_as_integer(name)                            | an integer or a |
-|                                                    | real, converted |
-|                                                    | to an integer   |
-|                                                    | using int()     |
-+----------------------------------------------------+-----------------+
++------------------------------------------------------+----------------------+
+| Function name                                        | Find the next …      |
++======================================================+======================+
+| integer(name, minimum=1, maximum=None, exact=None)   | integer              |
++------------------------------------------------------+----------------------+
+| positive_integer(name, minimum=1, maximum=None,      | positive integer     |
+| exact=None)                                          | (‘+’ is optional)    |
++------------------------------------------------------+----------------------+
+| negative_integer(name, minimum=1, maximum=None,      | negative integer     |
+| exact=None)                                          |                      |
++------------------------------------------------------+----------------------+
+| real(name)                                           | real                 |
++------------------------------------------------------+----------------------+
+| real_as_datetime(‘datetime’,                         | indexed time, (days  |
+| origin=datetime.datetime(1900,1,1), unit=‘days’)     | since… or hours      |
+|                                                      | since…) origin and   |
+|                                                      | unit have to be      |
+|                                                      | compatible with      |
+|                                                      | Python datetime. The |
+|                                                      | name will always be  |
+|                                                      | ‘datetime’.          |
++------------------------------------------------------+----------------------+
+| integer_as_datetime(‘datetime’, minimum=1,           | indexed time (days   |
+| maximum=None, exact=None,                            | since… or hours      |
+| origin=datetime.datetime(1900,1,1), unit=‘days’)     | since…), origin and  |
+|                                                      | unit have to be      |
+|                                                      | compatible with      |
+|                                                      | Python datetime. The |
+|                                                      | name will always be  |
+|                                                      | ‘datetime’.          |
++------------------------------------------------------+----------------------+
+| positive_real(name)                                  | positive real (‘+’   |
+|                                                      | is optional)         |
++------------------------------------------------------+----------------------+
+| negative_real(name)                                  | negative real        |
++------------------------------------------------------+----------------------+
+| number(name)                                         | an integer or a real |
++------------------------------------------------------+----------------------+
+| number_as_real(name)                                 | an integer or a      |
+|                                                      | real, converted to a |
+|                                                      | real using float()   |
++------------------------------------------------------+----------------------+
+| number_as_integer(name)                              | an integer or a      |
+|                                                      | real, converted to   |
+|                                                      | an integer using     |
+|                                                      | int()                |
++------------------------------------------------------+----------------------+
 
 Additional general purpose parsing functions probably not useful to
 TAPPy users.
@@ -219,17 +151,8 @@ TAPPy users.
 | insert(name, value)            | sets name to value                  |
 +--------------------------------+-------------------------------------+
 
-Filters
--------
-
-[CompareTidalFilters]
-
-Command Line Arguments
-----------------------
-
 Subcommands
-~~~~~~~~~~~
-
+-----------
 ::
 
    tappy.py
@@ -251,8 +174,7 @@ Subcommands
    Use "/usr/bin/tappy.py &lt;command&gt; --help" for individual command help.
 
 Analysis Arguments
-~~~~~~~~~~~~~~~~~~
-
+------------------
 ::
 
    tappy.py analysis --help
@@ -351,8 +273,7 @@ Analysis Arguments
    subsequent arguments are treated as bare arguments, not options)
 
 Prediction Arguments
-~~~~~~~~~~~~~~~~~~~~
-
+--------------------
 ::
 
    tappy.py prediction --help

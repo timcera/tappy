@@ -32,16 +32,16 @@ Fernández, D. A. (2022). Water Circulation and Transport Time Scales in
 the Beagle Channel, Southernmost Tip of South America. Journal of Marine
 Science and Engineering, 10(7), 941. https://doi.org/10.3390/jmse10070941
 
-Desmet, N., (2019). Modelling coral larvae exchanges between the Great
-Barrier Reef and outer reefs. Ecole polytechnique de Louvain, Université
-catholique de Louvain. Prom. : Hanert, Emmanuel ; Deleersnijder,
-Eric. http://hdl.handle.net/2078.1/thesis:19591
-
 Davis, E. E., Sun, T., Heesemann, M., Becker, K., & Schlesinger,
 A. (2023). Long‐Term Offshore Borehole Fluid‐Pressure Monitoring
 at the Northern Cascadia Subduction Zone and Inferences Regarding the
 State of Megathrust Locking. Geochemistry, Geophysics, Geosystems,
 24(6). Portico. https://doi.org/10.1029/2023gc010910
+
+Desmet, N., (2019). Modelling coral larvae exchanges between the Great
+Barrier Reef and outer reefs. Ecole polytechnique de Louvain, Université
+catholique de Louvain. Prom. : Hanert, Emmanuel ; Deleersnijder,
+Eric. http://hdl.handle.net/2078.1/thesis:19591
 
 Ferrarin, C., Roland, A., Bajo, M., Umgiesser, G., Cucco, A., Davolio, S.,
 Buzzi, A., Malguzzi, P., & Drofa, O. (2013). Tide-surge-wave modelling and

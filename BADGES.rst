@@ -18,11 +18,6 @@
     :target: https://pypi.python.org/pypi/tappy/
     :height: 20
 
-.. image:: https://img.shields.io/pypi/dd/tappy.svg
-    :alt: tappy downloads
-    :target: https://pypi.python.org/pypi/tappy/
-    :height: 20
-
 .. image:: https://img.shields.io/pypi/pyversions/tappy
     :alt: PyPI - Python Version
     :target: https://pypi.org/project/tappy/

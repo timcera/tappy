@@ -18,11 +18,6 @@
     :target: https://pypi.python.org/pypi/tappy/
     :height: 20
 
-.. image:: https://img.shields.io/pypi/dd/tappy.svg
-    :alt: tappy downloads
-    :target: https://pypi.python.org/pypi/tappy/
-    :height: 20
-
 .. image:: https://img.shields.io/pypi/pyversions/tappy
     :alt: PyPI - Python Version
     :target: https://pypi.org/project/tappy/
@@ -41,11 +36,12 @@ Features
 -  Outputs a ‘International Hydrographic Organization - Tidal and Water
    Level Working Group’ standard XML constituent file.
 -  Uses the IHO standard XML constituent file to make a predicted time
-   series. By far the most frequent request that I get.
+   series.
 -  Calculates the node factor at each water elevation measurement. Very
    important for long time-series (greater than a year).
--  Very accurate ephemeris calculations thanks to the
-   `Astrolabe <http://astrolabe.sourceforge.net>`__ library.
+-  Very accurate ephemeris calculations thanks to the `astronomia
+   <https://timcera.bitbucket.io/astronomia/docs/index.html>`__ library which
+   is a fork of 'Astrolabe' library which is no longer available.
 -  Able to read in different input data sets without changing TAPPY or
    the input data set. All you have to do is create a file that defines
    the input data set. Thanks to
@@ -62,18 +58,19 @@ Features
    series and infers additional constituents that are known to be
    specifically related to the main constituents.
 -  Can filter the tidal energy out of the input signal using transform
-   (FFT), usgs (PL33), doodson, and boxcar methods. \|
-   [CompareTidalFilters]
+   (FFT), usgs (PL33), doodson, and boxcar methods. `Comparison of Tidal
+   filters
+   <https://timcera.bitbucket.io/tappy/docs/CompareTidalFilters.html>`__.
 -  Can use the tidal filters to zero the time-series before
    determination of tidal constituents.
 -  Can pad the usgs, doodson, and boxcar filters with predicted data to
    minimize edge effects of the filters.
--  Convenience function to fill missing values with the predicted time series
+-  Convenience function to fill missing values with the predicted time series.
 
 Requirements
 ------------
 
-`Python version 3.7.1 or later <http://www.python.org>`__
+`Python version 3.8 or later <http://www.python.org>`__
 
 `SciPy <http://www.scipy.org>`__
 
