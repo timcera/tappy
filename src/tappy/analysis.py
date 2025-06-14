@@ -76,10 +76,11 @@ def analysis(
     xmlunits="m",
     xmldecimalplaces="full",
 ):
-    """Traditional analysis with separately calculated nodal factors.
+    """
+    Traditional analysis with nodal factors calculated for each observation.
 
-     Constituent amplitude units are the same as the input heights.
-     Constituent phases are based in the same time zone as the dates.
+    Constituent amplitude units are the same as the input heights.
+    Constituent phases are based in the same time zone as the dates.
 
     Parameters
     ----------
