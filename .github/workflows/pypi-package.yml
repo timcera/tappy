@@ -23,7 +23,7 @@ jobs:
 
         steps:
             - name: Checkout repository
-              uses: actions/checkout@v4
+              uses: actions/checkout@v5
               with:
                   submodules: recursive
 
@@ -70,7 +70,7 @@ jobs:
 
         steps:
             - name: Checkout source
-              uses: actions/checkout@v4
+              uses: actions/checkout@v5
               with:
                   submodules: recursive
 
@@ -80,7 +80,7 @@ jobs:
                   python -m build
 
             - name: Download artifact
-              uses: actions/download-artifact@v4
+              uses: actions/download-artifact@v5
               with:
                   path: dist
                   merge-multiple: true
