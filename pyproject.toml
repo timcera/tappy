@@ -1,34 +1,13 @@
 [build-system]
-requires = [
-    "setuptools>=45",
-    "setuptools_scm[toml]>=6.2",
-    "wheel"
-]
 build-backend = "setuptools.build_meta"
+requires = [
+    "setuptools-scm[simple]>=8",
+    "setuptools>=80"
+]
 
 [project]
-name = "tappy"
-dynamic = ["version", "readme"]
-description = "Command line script and Python library perform tidally-based analysis of water level data."
-requires-python = ">=3.7.1"
-dependencies = [
-    "astronomia",
-    "cltoolbox",
-    "dateparser",
-    "numpy >= 1.20, < 2.0 ; python_version <= '3.9'",
-    "pandas[excel]",
-    "pint != 0.21.*, < 0.22 ; python_version < '3.9'",
-    "pint-pandas",
-    "pydantic",
-    "pyparsing",
-    "pywavelets",
-    "scipy",
-    "skyfield",
-    "tabulate"
-]
-license = {text = "BSD-3-Clause"}
 authors = [
-    {name = "Tim Cera", email = "tim@cerazone.net"}
+    {email = "tim@cerazone.net", name = "Tim Cera"}
 ]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
@@ -39,15 +18,33 @@ classifiers = [
     "License :: OSI Approved :: BSD License",
     "Natural Language :: English",
     "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3 :: Only",
-    "Topic :: Scientific/Engineering",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Topic :: Scientific/Engineering :: Information Analysis",
+    "Topic :: Scientific/Engineering",
     "Topic :: Software Development :: Libraries :: Python Modules"
 ]
+dependencies = [
+    "astronomia",
+    "cltoolbox",
+    "dateparser",
+    "numpy",
+    "pandas[excel]",
+    "pint",
+    "pint-pandas",
+    "pydantic",
+    "pyparsing",
+    "pywavelets",
+    "scipy",
+    "skyfield",
+    "tabulate"
+]
+description = "Command line script and Python library perform tidally-based analysis of water level data."
+dynamic = ["readme", "version"]
 keywords = [
     "cli-app",
     "python",
@@ -56,23 +53,27 @@ keywords = [
     "tide-filter",
     "tide-prediction"
 ]
+license = {text = "BSD-3-Clause"}
+name = "tappy"
+readme = "README.rst"
+requires-python = ">=3.10"
 
 [project.scripts]
 tappy = "tappy.tappy:main"
 
 [project.urls]
+bitbucket = "https://bitbucket.org/timcera/tappy/src/main/"
 documentation = "https://timcera.bitbucket.io/tappy/docs/index.html#tappy-documentation"
 github = "https://github.com/timcera/tappy"
-bitbucket = "https://bitbucket.org/timcera/tappy/src/main/"
 
 [tool]
 
 [tool.commitizen]
 name = "cz_conventional_commits"
-version = "1.2.0"
 tag_format = "$version"
-version_files = ["VERSION"]
 update_changelog_on_bump = true
+version = "1.2.0"
+version_files = ["VERSION"]
 
 [tool.isort]
 profile = "black"
@@ -81,8 +82,8 @@ profile = "black"
 testpaths = ["tests"]
 
 [tool.setuptools]
-license-files = ["LICENSE.txt"]
 include-package-data = true
+license-files = ["LICENSE.txt"]
 
 [tool.setuptools.dynamic]
 readme = {file = "README.rst"}
@@ -90,5 +91,3 @@ version = {file = "VERSION"}
 
 [tool.setuptools.packages.find]
 where = ["src"]
-
-[tool.setuptools_scm]
