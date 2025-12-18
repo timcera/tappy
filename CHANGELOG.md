@@ -1,3 +1,11 @@
+## 1.2.1 (2025-12-17)
+
+### Fix
+
+- trying yet again to have tappy work on windows
+- use 'with' context manager to write
+- no longer write log files to /tmp so should run on windows
+
 ## 1.2.0 (2024-09-16)
 
 ### Fix
