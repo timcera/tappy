@@ -230,8 +230,6 @@ class Util:
         phase : array
             The phases of the constituents.
         """
-        fpss = open("/tmp/ss.log", "w")
-        fpss.write(f"{hours.shape}")
         total = np.zeros(len(hours), dtype="f")
         if isinstance(hours[0], datetime.datetime):
             hours = self.dates2jd(hours)
@@ -250,10 +248,7 @@ class Util:
                     - (p - speed_dict[i]["VAU"]) * deg2rad
                 )
             )
-            fpss.write(f"{speed_dict[i]['FF'].shape}")
-            fpss.write(f"{component.shape}")
             total = total + component
-            fpss.write(f"{total.shape}")
         return total
 
     def dates2jd(self, dates):
@@ -282,11 +277,6 @@ class Util:
         y : array
             The time-series of water levels.
         """
-        fp = open("/tmp/tap.log", "w")
-        fp.write(f"{x}")
-        fp.write(f"{y}")
-        fp.write(f"{y.shape}")
-        fp.write(fname)
         if isinstance(y, dict):
             for key in list(y.keys()):
                 fname = Path(fname)
