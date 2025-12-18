@@ -57,18 +57,21 @@ class TappyTest(unittest.TestCase):
         inputf = self.cwd / "example" / "mayport_florida_8720220_data.txt"
         _ = subprocess.call(
             shlex.split(
-                f"tappy analysis {inputf} --outputxml testout.xml --include_inferred"
+                f"tappy analysis {inputf} --outputxml testout.xml --include_inferred",
+                posix=(os.name == "posix"),
             )
         )
         _ = subprocess.call(
             shlex.split(
-                "tappy prediction testout.xml 2000-01-01T00:00:00 2000-02-01T00:00:00 60 --fname predict.out"
+                "tappy prediction testout.xml 2000-01-01T00:00:00 2000-02-01T00:00:00 60 --fname predict.out",
+                posix=(os.name == "posix"),
             )
         )
         def_filename = self.cwd / "tests" / "predict_def.out"
         _ = subprocess.call(
             shlex.split(
-                f"tappy analysis predict.out --def_filename {def_filename} --outputxml testoutclosure.xml --include_inferred"
+                f"tappy analysis predict.out --def_filename {def_filename} --outputxml testoutclosure.xml --include_inferred",
+                posix=(os.name == "posix"),
             )
         )
 

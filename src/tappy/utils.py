@@ -287,7 +287,7 @@ class Util:
             for d, v in zip(x, y):
                 print(f"{d.isoformat()},{v}")
         else:
-            with open(fname, mode="w", encoding="utf-8") as fpo:
+            with open(fname, mode="w", encoding="ascii") as fpo:
                 fpo.write("Datetime,water_level\n")
                 for d, v in zip(x, y):
                     fpo.write(f"{d.isoformat()},{v}\n")
