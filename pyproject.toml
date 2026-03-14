@@ -33,6 +33,7 @@ dependencies = [
     "cltoolbox",
     "dateparser",
     "numpy",
+    "openpyxl",
     "pandas[excel]",
     "pint",
     "pint-pandas",
