@@ -70,7 +70,7 @@ Features
 Requirements
 ------------
 
-`Python version 3.8 or later <http://www.python.org>`__
+`Python version 3.10 or later <http://www.python.org>`__
 
 `SciPy <http://www.scipy.org>`__
 
